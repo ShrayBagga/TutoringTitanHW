@@ -1,0 +1,277 @@
+body {
+    font-family: 'Inter', sans-serif; /* Using Inter font */
+    margin: 0;
+    padding: 0;
+    background-color: #e0e6f6; /* Light blue background */
+    color: #333; /* Dark gray text */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background-color: #001f3f; /* Dark blue */
+    color: white;
+    padding: 1rem 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom-left-radius: 8px; /* Rounded corners */
+    border-bottom-right-radius: 8px; /* Rounded corners */
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 20px;
+}
+
+.logo, .flier {
+    height: 60px;
+    max-width: 100px;
+    object-fit: contain;
+    border-radius: 8px; /* Rounded corners for images */
+}
+
+.logo {
+    margin-right: auto;
+}
+
+.flier {
+    margin-left: auto;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.2em;
+    flex-grow: 1;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+main {
+    display: flex;
+    flex: 1;
+    padding: 20px;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: #fff;
+    border-radius: 12px; /* More rounded corners */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar {
+    flex: 0 0 300px; /* Slightly wider sidebar */
+    background-color: #f0f4f8;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.08);
+}
+
+.sidebar h2 {
+    color: #003366;
+    margin-top: 0;
+    border-bottom: 2px solid #a8c1e7; /* Thicker border */
+    padding-bottom: 12px;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+}
+
+.setting-section {
+    margin-bottom: 30px;
+}
+
+.setting-section h3 {
+    color: #004080;
+    margin-bottom: 12px;
+    font-size: 1.3em;
+}
+
+.setting-section label {
+    display: flex; /* Use flex for alignment */
+    align-items: center; /* Vertically center checkbox/radio with text */
+    margin-bottom: 10px;
+    cursor: pointer;
+    font-size: 1.05em;
+}
+
+.setting-section input[type="radio"],
+.setting-section input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.2); /* Slightly larger checkboxes/radios */
+    accent-color: #0056b3;
+}
+
+.setting-section select,
+.setting-section input[type="number"] {
+    width: 100%; /* Full width */
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px; /* Rounded corners */
+    margin-top: 8px;
+    font-size: 1.05em;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+button#generateProblems,
+button#printProblems {
+    background-color: #007bff; /* Vibrant blue */
+    color: white;
+    padding: 14px 25px;
+    border: none;
+    border-radius: 8px; /* More rounded */
+    cursor: pointer;
+    font-size: 1.2em;
+    width: 100%;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+button#generateProblems:hover,
+button#printProblems:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+button#generateProblems:active,
+button#printProblems:active {
+    transform: translateY(0); /* Press down effect */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.problem-area {
+    flex: 1;
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+}
+
+.problem-area h2 {
+    color: #003366;
+    margin-top: 0;
+    border-bottom: 2px solid #a8c1e7;
+    padding-bottom: 12px;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+}
+
+.problem-item {
+    background-color: #f9fcff;
+    border: 1px solid #cceeff;
+    border-left: 6px solid #007bff; /* Thicker accent */
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.07);
+}
+
+.problem-text {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.solution-section {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap; /* Allow buttons to wrap */
+    gap: 10px; /* Space between buttons */
+    align-items: center;
+}
+
+.solution-toggle {
+    background-color: #add8e6;
+    color: #001f3f;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.solution-toggle:hover {
+    background-color: #87ceeb;
+    transform: translateY(-1px);
+}
+
+.solution-toggle:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.solution-content, .hint-content {
+    background-color: #e6f7ff;
+    border: 1px solid #99daff;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 6px;
+    display: none;
+    overflow-x: auto;
+    line-height: 1.5;
+}
+
+.hint-content {
+    background-color: #fff9e6;
+    border: 1px solid #ffeb99;
+    color: #6a5e00;
+}
+
+/* MathJax specific styling */
+.MathJax {
+    font-size: 1.15em !important; /* Slightly larger MathJax */
+    overflow-x: auto;
+    padding: 5px 0;
+}
+
+/* For JSXGraph containers */
+.jxgbox {
+    width: 100%;
+    max-width: 400px; /* Max width for graphs */
+    height: 350px; /* Slightly taller graphs */
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    margin-top: 15px;
+    border-radius: 8px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    main {
+        flex-direction: column;
+        padding: 15px;
+        margin: 15px auto;
+    }
+
+    .sidebar {
+        flex: none;
+        width: 100%;
+        padding: 20px;
+    }
+
+    .problem-area {
+        padding: 20px;
+    }
+
+    .jxgbox {
+        max-width: 100%; /* Full width on small screens */
+        height: 250px; /* Adjust height for smaller screens */
+    }
+
+    header h1 {
+        font-size: 1.8em;
+    }
+
+    .logo, .flier {
+        height: 50px;
+    }
+}

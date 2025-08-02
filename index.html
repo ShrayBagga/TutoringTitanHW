@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titan Training - Math Practice</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/jsxgraph@1.7.0/distrib/jsxgraph.css" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jsxgraph@1.7.0/distrib/jsxgraphcore.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <img src="Logo.png" alt="Titan Training Logo" class="logo">
+            <h1>Titan Training</h1>
+            <img src="Titan_Tutoring.png" alt="Titan Training Flier" class="flier">
+        </div>
+    </header>
+
+    <main class="container">
+        <aside class="sidebar">
+            <h2>Settings</h2>
+            <div class="setting-section">
+                <h3>Grade Level</h3>
+                <label><input type="radio" name="gradeLevel" value="grade6"> Grade 6</label>
+                <label><input type="radio" name="gradeLevel" value="grade7"> Grade 7</label>
+                <label><input type="radio" name="gradeLevel" value="grade8"> Grade 8</label>
+                <label><input type="radio" name="gradeLevel" value="grade9"> Grade 9 (Algebra)</label>
+                <label><input type="radio" name="gradeLevel" value="grade10"> Grade 10 (Geometry)</label>
+                <label><input type="radio" name="gradeLevel" value="grade11"> Grade 11 (Pre-Calculus)</label>
+                <label><input type="radio" name="gradeLevel" value="grade12"> Grade 12 (Calculus)</label>
+            </div>
+            <div class="setting-section">
+                <h3>Mode</h3>
+                <label><input type="checkbox" id="challengeMode"> Enable Challenge Mode</label>
+                <label><input type="checkbox" id="satPrepMode"> Enable SAT Prep Mode</label>
+            </div>
+
+            <div class="setting-section" id="topicSelection">
+                <h3>Topic</h3>
+                <select id="mathTopic">
+                    <option value="">Select a topic</option>
+                </select>
+            </div>
+
+            <div class="setting-section" id="difficultyAdjustment" style="display: none;">
+                <h3>Difficulty</h3>
+                <label><input type="radio" name="difficulty" value="easy" checked> Easy</label>
+                <label><input type="radio" name="difficulty" value="medium"> Medium</label>
+                <label><input type="radio" name="difficulty" value="hard"> Hard</label>
+            </div>
+
+            <div class="setting-section">
+                <h3>Problem Count</h3>
+                <input type="number" id="problemCount" value="5" min="1" max="20">
+            </div>
+            <button id="generateProblems">Generate Problems</button>
+            <button id="printProblems" style="display: none; margin-top: 10px;">Print Problems (PDF)</button>
+        </aside>
+
+        <section class="problem-area">
+            <h2>Problems</h2>
+            <div id="problemsContainer">
+                <p>Select settings and click "Generate Problems" to start.</p>
+                <p>Test Math (inline): $\frac{1}{2} + x = 5$</p>
+                <p>Test Math (display): $$\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$$</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Titan Training. All rights reserved.</p>
+    </footer>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
