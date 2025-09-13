@@ -1,0 +1,59 @@
+// --- Helper Functions ---
+function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function formatAnswer(value, decimalPlaces = 2) { if (typeof value === 'number') { return parseFloat(value.toFixed(decimalPlaces)).toString().replace(/\.00$/, ''); } return value; }
+function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+
+const problemGenerators = [
+    // 1. Basic Ratios
+    () => { const a = getRandomInt(2, 10); const b = getRandomInt(2, 10); const commonDivisor = gcd(a, b); return { problem: `A basket has \\(${a}\\) apples and \\(${b}\\) oranges. What is the ratio of apples to oranges in simplest form?`, answer: `\\(${a / commonDivisor}:${b / commonDivisor}\\)`, checkAnswer: `${a/commonDivisor}:${b/commonDivisor}` }; },
+    // 2. Equivalent Ratios
+    () => { const a = getRandomInt(2, 5); const b = getRandomInt(a + 1, 9); const multiplier = getRandomInt(2, 5); const c = a * multiplier; return { problem: `Find the missing number to make the ratios equivalent: \\(${a}:${b} = ${c}:x\\)`, answer: `\\(x = ${b * multiplier}\\)`, checkAnswer: (b * multiplier).toString() }; },
+    // 3. Unit Rates
+    () => { const items = getRandomInt(2, 5) * 10; const cost = items * getRandomInt(20, 50) / 100; const unitCost = cost / items; return { problem: `If a box of \\(${items}\\) pencils costs \\($${cost.toFixed(2)}\\), what is the cost per pencil?`, answer: `\\($${unitCost.toFixed(2)}\\) per pencil`, checkAnswer: unitCost.toFixed(2).toString() }; },
+    // 4. Converting Percent to Decimal
+    () => { const percent = getRandomInt(1, 99); return { problem: `Convert \\(${percent}\\%\\) to a decimal.`, answer: `\\(${percent / 100}\\)`, checkAnswer: (percent / 100).toString() }; },
+    // 5. Converting Decimal to Percent
+    () => { const decimal = getRandomInt(1, 99) / 100; return { problem: `Convert \\(${decimal}\\) to a percent.`, answer: `\\(${decimal * 100}\\%\\)`, checkAnswer: `${decimal * 100}%` }; },
+    // 6. Finding Percent of a Number
+    () => { const percent = [10, 20, 25, 50, 75][getRandomInt(0, 4)]; const number = getRandomInt(5, 20) * 4; const result = (percent / 100) * number; return { problem: `What is \\(${percent}\\%\\) of \\(${number}\\)?`, answer: `\\(${result}\\)`, checkAnswer: result.toString() }; },
+    // 7. Finding the Whole Given a Part and Percent
+    () => { const percent = [10, 20, 25, 50][getRandomInt(0, 3)]; const part = getRandomInt(5, 10); const whole = (part / percent) * 100; return { problem: `\\(${part}\\) is \\(${percent}\\%\\) of what number?`, answer: `\\(${whole}\\)`, checkAnswer: whole.toString() }; },
+    // 8. Ratio Word Problem (Part-to-Whole)
+    () => { const boys = getRandomInt(3, 8); const girls = getRandomInt(3, 8); const total = boys + girls; const commonDivisor = gcd(boys, total); return { problem: `In a class of \\(${total}\\) students, there are \\(${boys}\\) boys. What is the ratio of boys to the total number of students?`, answer: `\\(${boys / commonDivisor}:${total / commonDivisor}\\)`, checkAnswer: `${boys/commonDivisor}:${total/commonDivisor}` }; },
+    // 9. Rate Word Problem (Speed)
+    () => { const distance = getRandomInt(100, 300); const time = getRandomInt(2, 5); const speed = distance / time; return { problem: `A car travels \\(${distance}\\) miles in \\(${time}\\) hours. What is its average speed in miles per hour?`, answer: `\\(${speed}\\) mph`, checkAnswer: speed.toString() }; },
+    // 10. Percent Word Problem (Discount)
+    () => { const price = getRandomInt(20, 100); const discountPercent = getRandomInt(10, 30); const discountAmount = price * (discountPercent / 100); const finalPrice = price - discountAmount; return { problem: `A jacket originally costs \\($${price}\\). It is on sale for \\(${discountPercent}\\%\\) off. What is the final price?`, answer: `\\($${finalPrice.toFixed(2)}\\)`, checkAnswer: finalPrice.toFixed(2) }; },
+    // 11. Ratio Table
+    () => { const ratioA = getRandomInt(2, 5); const ratioB = getRandomInt(ratioA + 1, 9); const multiplier = getRandomInt(2, 4); return { problem: `Complete the ratio table. \n\n| Miles | ${ratioA} | ${ratioA*multiplier} | ? |\n|:---:|:---:|:---:|:---:|\n| Hours | ${ratioB} | ? | ${ratioB*(multiplier+1)} |`, answer: `The missing values are \\(${ratioB*multiplier}\\) and \\(${ratioA*(multiplier+1)}\\).`, checkAnswer: `${ratioB*multiplier},${ratioA*(multiplier+1)}` }; },
+    // 12. Unit Price Comparison
+    () => { const itemsA = 12, priceA = 3.60, itemsB = 15, priceB = 4.20; const unitA = priceA / itemsA, unitB = priceB / itemsB; return { problem: `Store A sells \\(${itemsA}\\) eggs for \\($${priceA.toFixed(2)}\\). Store B sells \\(${itemsB}\\) eggs for \\($${priceB.toFixed(2)}\\). Which store has the better deal?`, answer: `Store B is the better deal at \\($${unitB.toFixed(2)}\\) per egg.`, checkAnswer: "Store B" }; },
+    // 13. Percent Increase
+    () => { const original = getRandomInt(50, 100); const increase = getRandomInt(10, 20); const newAmount = original + increase; const percentIncrease = (increase / original) * 100; return { problem: `The price of a stock went from \\($${original}\\) to \\($${newAmount}\\). What was the percent increase?`, answer: `\\(${formatAnswer(percentIncrease)}\\%\\)`, checkAnswer: `${formatAnswer(percentIncrease)}%` }; },
+    // 14. Percent Decrease
+    () => { const original = getRandomInt(80, 120); const decrease = getRandomInt(10, 25); const newAmount = original - decrease; const percentDecrease = (decrease / original) * 100; return { problem: `A city's population decreased from \\(${original},000\\) to \\(${newAmount},000\\). What was the percent decrease?`, answer: `\\(${formatAnswer(percentDecrease)}\\%\\)`, checkAnswer: `${formatAnswer(percentDecrease)}%` }; },
+    // 15. Tip Calculation
+    () => { const bill = getRandomInt(30, 80); const tipPercent = getRandomInt(15, 20); const tipAmount = bill * (tipPercent / 100); const total = bill + tipAmount; return { problem: `Your restaurant bill is \\($${bill}\\). How much is a \\(${tipPercent}\\%\\) tip? What is the total cost?`, answer: `Tip: \\($${tipAmount.toFixed(2)}\\), Total: \\($${total.toFixed(2)}\\)`, checkAnswer: `${tipAmount.toFixed(2)},${total.toFixed(2)}` }; },
+    // 16. Scale Drawing Ratios
+    () => { const scaleCm = 1, scaleMeters = getRandomInt(2, 5); const drawingLength = getRandomInt(5, 10); const actualLength = drawingLength * scaleMeters; return { problem: `The scale on a blueprint is \\(${scaleCm}\\) cm = \\(${scaleMeters}\\) meters. If a room is \\(${drawingLength}\\) cm long, what is its actual length?`, answer: `\\(${actualLength}\\) meters`, checkAnswer: actualLength.toString() }; },
+    // 17. Ratio with Three Parts
+    () => { const multiplier = getRandomInt(3, 6); const partA = 2 * multiplier; const partB = 3 * multiplier; const partC = 5 * multiplier; const total = partA + partB + partC; return { problem: `A \\($${total}\\) prize is shared in the ratio \\(2:3:5\\). How much does each person get?`, answer: `\\($${partA}\\), \\($${partB}\\), and \\($${partC}\\)`, checkAnswer: `${partA},${partB},${partC}` }; },
+    // 18. Using Ratios to Find a Missing Part
+    () => { const ratioRed = 3, ratioBlue = 4; const multiplier = getRandomInt(4, 8); const redMarbles = ratioRed * multiplier; const totalMarbles = (ratioRed + ratioBlue) * multiplier; return { problem: `The ratio of red to blue marbles is \\(${ratioRed}:${ratioBlue}\\). If there are \\(${redMarbles}\\) red marbles, how many marbles are there in total?`, answer: `There are \\(${totalMarbles}\\) marbles.`, checkAnswer: totalMarbles.toString() }; },
+    // 19. Rate of Change from a Graph (Graph Problem)
+    () => { const rate = getRandomInt(5, 15); const graphId = `graph-${Date.now()}`; const graphFunction = { functions: [{ type: 'expression', expression: `function(x){ return ${rate}*x; }` }], boundingbox: [0, 5, 5*rate+5, 0], labels: [ {x: 2.5, y: -5, text: "Time (hours)"}, {x: -0.5, y: 2.5*rate, text: "Distance (km)", options: {rotate: 90}} ] }; return { problem: `What is the cyclist's speed in km/h based on the graph?`, answer: `\\(${rate}\\) km/h`, checkAnswer: rate.toString(), graphId, graphFunction }; },
+    // 20. Percent Error
+    () => { const actual = getRandomInt(80, 90); const measured = actual + getRandomInt(2, 5); const error = Math.abs(measured - actual); const percentError = (error / actual) * 100; return { problem: `You measured a line to be \\(${measured}\\) cm, but its actual length is \\(${actual}\\) cm. What is the percent error? (Round to one decimal place).`, answer: `\\(${percentError.toFixed(1)}\\%\\)`, checkAnswer: `${percentError.toFixed(1)}%` }; },
+];
+
+function generate(settings) {
+    const generator = problemGenerators[getRandomInt(0, problemGenerators.length - 1)];
+    return { ...generator(), hint: generator().hint || "Review the definitions of ratios, rates, and percentages." };
+}
+
+export const module = {
+    topicId: '6M10',
+    topicName: 'Ratios, Rates & Percentages',
+    generateProblem: generate
+};
+
