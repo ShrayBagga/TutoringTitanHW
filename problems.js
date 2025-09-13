@@ -1,4 +1,334 @@
 // Helper functions
+
+// Helper functions
+export function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+export function getRandomArbitrary(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+export function formatAnswer(value, decimalPlaces) {
+    if (typeof value === 'number') {
+        return parseFloat(value.toFixed(decimalPlaces)).toString();
+    }
+    return value;
+}
+
+export function formatFraction(numerator, denominator) {
+    if (denominator === 0) return 'Undefined';
+    if (numerator % denominator === 0) {
+        return (numerator / denominator).toString();
+    }
+    const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+    const commonDivisor = gcd(Math.abs(numerator), Math.abs(denominator));
+    const simpNum = numerator / commonDivisor;
+    const simpDen = denominator / commonDivisor;
+    if (simpDen < 0) {
+        return `\\frac{${-simpNum}}{${-simpDen}}`;
+    }
+    return `\\frac{${simpNum}}{${simpDen}}`;
+}
+
+export function formatPolynomial(terms) {
+    let polyStr = '';
+    if (terms.length === 0) {
+        return '0';
+    }
+
+    for (let i = terms.length - 1; i >= 0; i--) {
+        const coeff = terms[i];
+        if (coeff === 0) {
+            continue;
+        }
+
+        let termStr = '';
+        const absCoeff = Math.abs(coeff);
+        const sign = coeff > 0 ? '+' : '-';
+
+        if (polyStr !== '' && coeff > 0) {
+             polyStr += ` + `;
+        } else if (coeff < 0) {
+             polyStr += ` - `;
+        }
+        
+        if (i === 0) {
+            termStr = `${absCoeff}`;
+        } else if (i === 1) {
+            termStr = (absCoeff === 1) ? 'x' : `${absCoeff}x`;
+        } else {
+            termStr = (absCoeff === 1) ? `x^${i}` : `${absCoeff}x^${i}`;
+        }
+
+        polyStr += termStr;
+    }
+    
+    if (polyStr.startsWith(' + ')) {
+        polyStr = polyStr.substring(3);
+    }
+    return polyStr.trim() || '0';
+}
+
+
+// JSXGraph related functions
+export const JXGBOARDS = {};
+
+export function renderAllGraphs() {
+    document.querySelectorAll('.jxgbox').forEach(box => {
+        if (JXGBOARDS[box.id]) {
+            JXGBOARDS[box.id] = null;
+        }
+        box.style.display = 'none'; // Hide all graph boxes initially
+    });
+}
+
+export function renderGraph(graphId, graphFunctionData) {
+    const graphBox = document.getElementById(graphId);
+    if (!graphBox) {
+        console.error(`Graph container with ID ${graphId} not found.`);
+        return;
+    }
+
+    graphBox.style.display = 'block';
+
+    const board = JXG.JSXGraph.initBoard(graphId, {
+        boundingbox: graphFunctionData.boundingbox || [-10, 10, 10, -10],
+        axis: true,
+        showCopyright: false,
+    });
+    JXGBOARDS[graphId] = board;
+
+    graphFunctionData.functions.forEach(func => {
+        if (func.type === 'expression') {
+            board.create('functiongraph', [func.expression], func.options || { strokeColor: 'blue', strokeWidth: 2 });
+        } else if (func.type === 'point') {
+            board.create('point', [func.x, func.y], func.options || { name: `(${func.x}, ${func.y})`, color: 'red', size: 3 });
+        }
+    });
+}
+
+// Problem generation dispatchers
+export function generateGrade6Problem(topic, settings) {
+    switch (topic) {
+        case 'arithmetic_operations': return generateArithmeticOperations(settings);
+        case 'fractions_decimals_percent': return generateFractionsDecimalsPercent(settings);
+        case 'geometry_basic_shapes': return generateGeometryBasicShapes(settings);
+        case 'ratios_proportions': return generateRatiosProportions(settings);
+        default: return { problem: `Error: Unknown Grade 6 topic '${topic}'`, answer: 'N/A', hint: 'N/A' };
+    }
+}
+
+export function generateGrade7Problem(topic, settings) {
+    switch (topic) {
+        case 'integers_rational_numbers': return generateIntegersRationalNumbers(settings);
+        case 'expressions_equations_basic': return generateExpressionsEquationsBasic(settings);
+        case 'angles_triangles': return generateAnglesTriangles(settings);
+        case 'probability_simple': return generateProbabilitySimple(settings);
+        default: return { problem: `Error: Unknown Grade 7 topic '${topic}'`, answer: 'N/A', hint: 'N/A' };
+    }
+}
+
+export function generateGrade8Problem(topic, settings) {
+    switch (topic) {
+        case 'linear_equations_systems_basic': return generateLinearEquationsSystemsBasic(settings);
+        case 'exponents_scientific_notation': return generateExponentsScientificNotation(settings);
+        case 'pythagorean_theorem_basic': return generatePythagoreanTheoremBasic(settings);
+        case 'functions_introduction': return generateFunctionsIntroduction(settings);
+        default: return { problem: `Error: Unknown Grade 8 topic '${topic}'`, answer: 'N/A', hint: 'N/A' };
+    }
+}
+
+export function generateAlgebraProblem(topic, settings) {
+    switch (topic) {
+        case 'algebra_linear_equations': return generateAlgebraLinearEquations(settings);
+        case 'algebra_quadratic_equations': return generateAlgebraQuadraticEquations(settings);
+        case 'algebra_polynomial_operations': return generateAlgebraPolynomialOperations(settings);
+        case 'algebra_system_equations': return generateAlgebraSystemEquations(settings);
+        default: return { problem: `Error: Unknown Algebra I topic '${topic}'`, answer: 'N/A', hint: 'N/A' };
+    }
+}
+
+export function generateGeometryProblem(topic, settings) {
+    switch (topic) {
+        case 'geometry_area_perimeter': return generateGeometryAreaPerimeter(settings);
+        case 'geometry_volume_surface_area': return generateGeometryVolumeSurfaceArea(settings);
+        case 'geometry_pythagorean_theorem': return generatePythagoreanTheoremBasic(settings);
+        case 'geometry_trigonometry_basics': return generateGeometryTrigonometryBasics(settings);
+        default: return { problem: `Error: Unknown Geometry topic '${topic}'`, answer: 'N/A', hint: 'N/A' };
+    }
+}
+
+export function generatePrecalcProblem(topic, settings) {
+    switch (topic) {
+        case 'precalc_functions_graphing': return generatePrecalcFunctionsGraphing(settings);
+        case 'precalc_log_exp': return generatePrecalcLogExp(settings);
+        case 'precalc_trig_equations': return generatePrecalcTrigEquations(settings);
+        case 'precalc_sequences_series': return generatePrecalcSequencesSeries(settings);
+        default: return { problem: `Error: Unknown Precalculus topic '${topic}'`, answer: 'N/A', hint: 'N/A' };
+    }
+}
+
+export function generateCalculusProblem(topic, settings) {
+    switch (topic) {
+        case 'calculus_limits': return generateCalculusLimits(settings);
+        case 'calculus_derivatives': return generateCalculusDerivatives(settings);
+        case 'calculus_integrals': return generateCalculusIntegrals(settings);
+        case 'calculus_applications': return generateCalculusApplications(settings);
+        default: return { problem: `Error: Unknown Calculus topic '${topic}'`, answer: 'N/A', hint: 'N/A' };
+    }
+}
+
+export function generateSatPrepProblem(topic, settings) {
+    switch (topic) {
+        case 'sat_linear_equations': return generateAlgebraLinearEquations(settings);
+        case 'sat_quadratic_functions': return generateAlgebraQuadraticEquations(settings);
+        case 'sat_polynomials': return generateAlgebraPolynomialOperations(settings);
+        case 'sat_systems_equations': return generateAlgebraSystemEquations(settings);
+        case 'sat_functions': return generatePrecalcFunctionsGraphing(settings);
+        case 'sat_geometry_area_volume': return getRandomInt(0,1) === 0 ? generateGeometryAreaPerimeter(settings) : generateGeometryVolumeSurfaceArea(settings);
+        case 'sat_trigonometry_basics': return generateGeometryTrigonometryBasics(settings);
+        case 'sat_exponents_roots': return generateExponentsScientificNotation(settings);
+        case 'sat_data_analysis': return generateSatDataAnalysis(settings);
+        case 'sat_probability': return generateProbabilitySimple(settings);
+        default: return { problem: `Error: Unknown SAT topic '${topic}'`, answer: 'N/A', hint: 'N/A' };
+    }
+}
+
+// --- NEW/UPDATED: Challenge problem generation ---
+export function generateChallengeComplexAlgebra(settings) {
+    const type = getRandomInt(0, 2);
+    let problem, answer, checkAnswer, hint;
+
+    const a1 = getRandomInt(-5, 5);
+    const b1 = getRandomInt(-5, 5);
+    const a2 = getRandomInt(-5, 5);
+    const b2 = getRandomInt(-5, 5);
+
+    if (type === 0) { // Addition/Subtraction
+        const op = getRandomInt(0, 1); // 0 for add, 1 for subtract
+        const realPart = op === 0 ? a1 + a2 : a1 - a2;
+        const imagPart = op === 0 ? b1 + b2 : b1 - b2;
+        
+        problem = `Simplify the expression: \\((${a1} ${b1 >= 0 ? '+' : '-'} ${Math.abs(b1)}i) ${op === 0 ? '+' : '-'} (${a2} ${b2 >= 0 ? '+' : '-'} ${Math.abs(b2)}i)\\).`;
+        answer = `\\(${realPart} ${imagPart >= 0 ? '+' : '-'} ${Math.abs(imagPart)}i\\)`;
+        checkAnswer = `${realPart} ${imagPart >= 0 ? '+' : '-'} ${Math.abs(imagPart)}i`.replace(/\s/g, '');
+        hint = "Combine the real parts and the imaginary parts separately.";
+    } else if (type === 1) { // Multiplication
+        const realPart = a1 * a2 - b1 * b2;
+        const imagPart = a1 * b2 + a2 * b1;
+        problem = `Simplify the expression: \\((${a1} ${b1 >= 0 ? '+' : '-'} ${Math.abs(b1)}i) \\cdot (${a2} ${b2 >= 0 ? '+' : '-'} ${Math.abs(b2)}i)\\).`;
+        answer = `\\(${realPart} ${imagPart >= 0 ? '+' : '-'} ${Math.abs(imagPart)}i\\)`;
+        checkAnswer = `${realPart} ${imagPart >= 0 ? '+' : '-'} ${Math.abs(imagPart)}i`.replace(/\s/g, '');
+        hint = "Use the FOIL method and remember that \\(i^2 = -1\\).";
+    } else { // Division
+         if (a2 === 0 && b2 === 0) return generateChallengeComplexAlgebra(settings);
+         const denominator = a2 * a2 + b2 * b2;
+         const realPartNum = a1 * a2 + b1 * b2;
+         const imagPartNum = b1 * a2 - a1 * b2;
+         
+         problem = `Simplify the expression: \\(\\frac{${a1} ${b1 >= 0 ? '+' : '-'} ${Math.abs(b1)}i}{${a2} ${b2 >= 0 ? '+' : '-'} ${Math.abs(b2)}i}\\).`;
+         answer = `\\(${formatFraction(realPartNum, denominator)} ${imagPartNum >= 0 ? '+' : '-'} ${formatFraction(Math.abs(imagPartNum), denominator)}i\\)`;
+         checkAnswer = `${realPartNum/denominator} ${imagPartNum >= 0 ? '+' : '-'} ${Math.abs(imagPartNum)/denominator}i`.replace(/\s/g, '');
+         hint = "Multiply the numerator and denominator by the conjugate of the denominator.";
+    }
+    return { problem, answer, checkAnswer, hint };
+}
+
+export function generateChallengeAdvancedNumberTheory(settings) {
+    return { problem: "Challenge: Advanced Number Theory (not yet implemented)", answer: "N/A", checkAnswer: "N/A", hint: "N/A" };
+}
+// ... other challenge functions remain the same ...
+// NOTE: I will omit the rest of the challenge functions for brevity, but they would remain in your actual file.
+
+// --- Individual problem generation functions (examples with checkAnswer) ---
+
+function generateArithmeticOperations(settings) {
+    const type = getRandomInt(0, 3);
+    let num1 = getRandomInt(1, 100);
+    let num2 = getRandomInt(1, 100);
+    let problem, answer, checkAnswer, hint;
+
+    switch (type) {
+        case 0:
+            problem = `What is \\(${num1} + ${num2}\\)?`;
+            checkAnswer = (num1 + num2).toString();
+            answer = `\\(${checkAnswer}\\)`;
+            hint = "Add the two numbers together.";
+            break;
+        case 1:
+            if (num1 < num2) [num1, num2] = [num2, num1];
+            problem = `What is \\(${num1} - ${num2}\\)?`;
+            checkAnswer = (num1 - num2).toString();
+            answer = `\\(${checkAnswer}\\)`;
+            hint = "Subtract the second number from the first.";
+            break;
+        case 2:
+            num1 = getRandomInt(1, 12);
+            num2 = getRandomInt(1, 12);
+            problem = `What is \\(${num1} \\times ${num2}\\)?`;
+            checkAnswer = (num1 * num2).toString();
+            answer = `\\(${checkAnswer}\\)`;
+            hint = "Multiply the two numbers.";
+            break;
+        case 3:
+            num2 = getRandomInt(1, 10);
+            num1 = num2 * getRandomInt(2, 12);
+            problem = `What is \\(${num1} \\div ${num2}\\)?`;
+            checkAnswer = (num1 / num2).toString();
+            answer = `\\(${checkAnswer}\\)`;
+            hint = "Divide the first number by the second.";
+            break;
+    }
+    return { problem, answer, checkAnswer, hint };
+}
+
+function generateExpressionsEquationsBasic(settings) {
+    // ... (rest of the file remains the same)
+    // For brevity, I'll only show the changed function and the first few standard ones.
+    // In your project, you would keep the entire contents of the original file
+    // and just apply the changes shown.
+    const type = getRandomInt(0, 2);
+    let problem, answer, checkAnswer, hint;
+
+    switch (type) {
+        case 0:
+            const coeff1 = getRandomInt(2, 10);
+            const const1 = getRandomInt(1, 15);
+            const coeff2 = getRandomInt(2, 10);
+            const const2 = getRandomInt(1, 15);
+            problem = `Simplify the expression: \\(${coeff1}x + ${const1} + ${coeff2}x - ${const2}\\).`;
+            checkAnswer = `${coeff1 + coeff2}x+${const1 - const2}`.replace('+-', '-');
+            answer = `\\(${coeff1 + coeff2}x + ${const1 - const2}\\)`;
+            hint = "Combine like terms (terms with 'x' and constant terms separately).";
+            break;
+        case 1:
+            const xVal = getRandomInt(1, 20);
+            const eqNum = getRandomInt(2, 10);
+            const result = xVal + eqNum;
+            problem = `Solve for \\(x\\): \\(x + ${eqNum} = ${result}\\).`;
+            checkAnswer = xVal.toString();
+            answer = `\\(x = ${xVal}\\)`;
+            hint = "Use the inverse operation to isolate \\(x\\).";
+            break;
+        case 2:
+            const evalCoeff = getRandomInt(2, 7);
+            const evalConst = getRandomInt(1, 10);
+            const evalX = getRandomInt(-5, 5);
+            problem = `Evaluate the expression \\(${evalCoeff}x + ${evalConst}\\) when \\(x = ${evalX}\\).`;
+            checkAnswer = (evalCoeff * evalX + evalConst).toString();
+            answer = `\\(${checkAnswer}\\)`;
+            hint = "Substitute the given value of \\(x\\) into the expression and simplify.";
+            break;
+    }
+    return { problem, answer, checkAnswer, hint };
+}
+
+// ... All other problem generation functions from your original file would follow here ...
+// Make sure to copy the rest of your original problems.js file content below this point.
+
 export function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
