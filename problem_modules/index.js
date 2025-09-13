@@ -1,30 +1,29 @@
-// 1. Import every 6th-grade problem module.
-import { module as ratiosModule } from './g6_ratios_rates_percentages.js';
-import { module as arithmeticModule } from './g6_arithmetic_operations.js';
-import { module as fractionsDecimalsModule } from './g6_fractions_decimals.js';
-import { module as numberSystemModule } from './g6_number_system.js';
-import { module as algebraicExpressionsModule } from './g6_algebraic_expressions.js';
-import { module as equationsInequalitiesModule } from './g6_equations_inequalities.js';
-import { module as geometryModule } from './g6_geometry_area_volume.js';
-import { module as coordinatePlaneModule } from './g6_coordinate_plane.js';
-import { module as statsIntroModule } from './g6_data_statistics_intro.js';
-import { module as centralTendencyModule } from './g6_measures_central_tendency.js';
-import { module as dataDisplaysModule } from './g6_data_displays.js';
-import { module as probabilityModule } from './g6_probability_basics.js';
+// 1. Import every 6th-grade problem module using the 6M# naming convention.
+import { module as module1 } from './6M1.js';
+import { module as module2 } from './6M2.js';
+import { module as module3 } from './6M3.js';
+import { module as module4 } from './6M4.js';
+import { module as module5 } from './6M5.js';
+import { module as module6 } from './6M6.js';
+import { module as module7 } from './6M7.js';
+import { module as module8 } from './6M8.js';
+import { module as module9 } from './6M9.js';
+import { module as module10 } from './6M10.js';
+import { module as module11 } from './6M11.js';
+import { module as module12 } from './6M12.js';
 
 // 2. Add them all to a single array and export it.
-// This is the only list the main application needs to know about.
 export const allProblemModules = [
-    ratiosModule,
-    arithmeticModule,
-    fractionsDecimalsModule,
-    numberSystemModule,
-    algebraicExpressionsModule,
-    equationsInequalitiesModule,
-    geometryModule,
-    coordinatePlaneModule,
-    statsIntroModule,
-    centralTendencyModule,
-    dataDisplaysModule,
-    probabilityModule,
+    module1,
+    module2,
+    module3,
+    module4,
+    module5,
+    module6,
+    module7,
+    module8,
+    module9,
+    module10,
+    module11,
+    module12,
 ];
