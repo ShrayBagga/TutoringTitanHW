@@ -117,15 +117,24 @@ main {
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+.button-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
 button#generateProblems,
-button#printProblems {
+button#startTest,
+button#printProblems,
+button#submitTestBtn {
     background-color: #007bff; /* Vibrant blue */
     color: white;
-    padding: 14px 25px;
+    padding: 14px 20px;
     border: none;
     border-radius: 8px; /* More rounded */
     cursor: pointer;
-    font-size: 1.2em;
+    font-size: 1.1em;
     width: 100%;
     transition: background-color 0.3s ease, transform 0.2s ease;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -133,17 +142,42 @@ button#printProblems {
     letter-spacing: 0.5px;
 }
 
+button#startTest {
+    background-color: #28a745; /* Green for test */
+}
+
 button#generateProblems:hover,
-button#printProblems:hover {
+button#startTest:hover,
+button#printProblems:hover,
+button#submitTestBtn:hover {
     background-color: #0056b3; /* Darker blue on hover */
     transform: translateY(-2px); /* Slight lift effect */
 }
 
+button#startTest:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
 button#generateProblems:active,
-button#printProblems:active {
+button#startTest:active,
+button#printProblems:active,
+button#submitTestBtn:active {
     transform: translateY(0); /* Press down effect */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+button#submitTestBtn {
+    display: block;
+    margin: 20px auto 0;
+    width: auto;
+    max-width: 300px;
+    background-color: #dc3545; /* Red for submit */
+}
+
+button#submitTestBtn:hover {
+    background-color: #c82333;
+}
+
 
 .problem-area {
     flex: 1;
@@ -224,6 +258,54 @@ button#printProblems:active {
     border: 1px solid #ffeb99;
     color: #6a5e00;
 }
+
+
+/* --- Test Mode Styles --- */
+.answer-input {
+    margin-top: 15px;
+}
+
+.answer-input label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.answer-input input {
+    padding: 8px;
+    font-size: 1em;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    width: 200px;
+}
+
+.results-container {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.results-container h3 {
+    margin-top: 0;
+}
+
+.result-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.result-item.correct {
+    background-color: #d4edda;
+    border-left: 5px solid #28a745;
+}
+
+.result-item.incorrect {
+    background-color: #f8d7da;
+    border-left: 5px solid #dc3545;
+}
+
 
 /* MathJax specific styling */
 .MathJax {

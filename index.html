@@ -18,7 +18,7 @@
         <div class="header-content">
             <img src="Logo.png" alt="Titan Training Logo" class="logo">
             <h1>Titan Training</h1>
-            <img src="Titan_Tutoring.png" alt="Titan Training Flier" class="flier">
+            <img src="Titan_Tutoring.jpg" alt="Titan Training Flier" class="flier">
         </div>
     </header>
 
@@ -59,23 +59,22 @@
                 <h3>Problem Count</h3>
                 <input type="number" id="problemCount" value="5" min="1" max="20">
             </div>
-            <button id="generateProblems">Generate Problems</button>
+            <div class="button-group">
+                <button id="generateProblems">Practice</button>
+                <button id="startTest">Take Test</button>
+            </div>
             <button id="printProblems" style="display: none; margin-top: 10px;">Print Problems (PDF)</button>
         </aside>
 
         <section class="problem-area">
             <h2>Problems</h2>
+            <div id="resultsContainer" class="results-container" style="display: none;"></div>
             <div id="problemsContainer">
-                <p>Select settings and click "Generate Problems" to start.</p>
-                <p>Test Math (inline): $\frac{1}{2} + x = 5$</p>
-                <p>Test Math (display): $$\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$$</p>
+                <p>Select settings and click "Practice" or "Take Test" to start.</p>
             </div>
+            <button id="submitTestBtn" style="display: none;">Submit Test</button>
         </section>
     </main>
-
-    <footer>
-        <p>&copy; 2024 Titan Training. All rights reserved.</p>
-    </footer>
 
     <script type="module" src="main.js"></script>
 </body>
