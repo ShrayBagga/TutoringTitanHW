@@ -26,38 +26,15 @@
         <aside class="sidebar">
             <h2>Settings</h2>
             <div class="setting-section">
-                <h3>Grade Level</h3>
-                <label><input type="radio" name="gradeLevel" value="grade6"> Grade 6</label>
-                <label><input type="radio" name="gradeLevel" value="grade7"> Grade 7</label>
-                <label><input type="radio" name="gradeLevel" value="grade8"> Grade 8</label>
-                <label><input type="radio" name="gradeLevel" value="grade9"> Grade 9 (Algebra)</label>
-                <label><input type="radio" name="gradeLevel" value="grade10"> Grade 10 (Geometry)</label>
-                <label><input type="radio" name="gradeLevel" value="grade11"> Grade 11 (Pre-Calculus)</label>
-                <label><input type="radio" name="gradeLevel" value="grade12"> Grade 12 (Calculus)</label>
-            </div>
-            <div class="setting-section">
-                <h3>Mode</h3>
-                <label><input type="checkbox" id="challengeMode"> Enable Challenge Mode</label>
-                <label><input type="checkbox" id="satPrepMode"> Enable SAT Prep Mode</label>
-            </div>
-
-            <div class="setting-section" id="topicSelection">
-                <h3>Topic</h3>
-                <select id="mathTopic">
-                    <option value="">Select a topic</option>
-                </select>
-            </div>
-
-            <div class="setting-section" id="difficultyAdjustment" style="display: none;">
-                <h3>Difficulty</h3>
-                <label><input type="radio" name="difficulty" value="easy" checked> Easy</label>
-                <label><input type="radio" name="difficulty" value="medium"> Medium</label>
-                <label><input type="radio" name="difficulty" value="hard"> Hard</label>
+                <h3>6th Grade Topics</h3>
+                <div id="topic-checklist">
+                    <!-- Checkboxes will be dynamically inserted here by main.js -->
+                </div>
             </div>
 
             <div class="setting-section">
                 <h3>Problem Count</h3>
-                <input type="number" id="problemCount" value="5" min="1" max="20">
+                <input type="number" id="problemCount" value="10" min="1" max="50">
             </div>
             <div class="button-group">
                 <button id="generateProblems">Practice</button>
@@ -70,7 +47,7 @@
             <h2>Problems</h2>
             <div id="resultsContainer" class="results-container" style="display: none;"></div>
             <div id="problemsContainer">
-                <p>Select settings and click "Practice" or "Take Test" to start.</p>
+                <p>Select one or more topics and click "Practice" or "Take Test" to start.</p>
             </div>
             <button id="submitTestBtn" style="display: none;">Submit Test</button>
         </section>
@@ -79,3 +56,4 @@
     <script type="module" src="main.js"></script>
 </body>
 </html>
+
