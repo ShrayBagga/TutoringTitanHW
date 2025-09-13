@@ -1,7 +1,8 @@
 import { allProblemModules } from './problem_modules/index.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    const topicCheckboxes = document.querySelectorAll('#topic-checklist input[type="checkbox"]');
+    // CORRECTED: The selector now targets the 'name' attribute, which is in your HTML.
+    const topicCheckboxes = document.querySelectorAll('input[name="topic"]');
     const problemCountInput = document.getElementById('problemCount');
     const generateProblemsBtn = document.getElementById('generateProblems');
     const startTestBtn = document.getElementById('startTest');
@@ -47,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Generate a problem from that module
             const problemData = randomModule.generateProblem({});
             
-            generatedProblemsData.push({ ...problemData, problemText: problemData.problem });
+            generatedProblemsData.push({ ...problemData, problemText: problemData.problem, graphId: problemData.graphId, graphFunction: problemData.graphFunction });
 
             const problemDiv = document.createElement('div');
             problemDiv.className = 'problem-item';
@@ -123,9 +124,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (problemData && problemData.graphFunction) {
                         const graphBox = document.getElementById(graphId);
                         // Clear previous graph before rendering a new one
-                        graphBox.innerHTML = ''; 
-                        graphBox.style.display = 'block';
-                        renderGraph(graphId, problemData.graphFunction);
+                        if (graphBox.style.display === 'block') {
+                            graphBox.style.display = 'none';
+                            graphBox.innerHTML = '';
+                        } else {
+                            graphBox.style.display = 'block';
+                            renderGraph(graphId, problemData.graphFunction);
+                        }
                     }
                 }
             });
@@ -133,6 +138,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderGraph(graphId, graphFunctionData) {
+        // Clear any previous board in this div to prevent errors
+        JXG.JSXGraph.freeBoard(document.getElementById(graphId));
+        
         const board = JXG.JSXGraph.initBoard(graphId, {
             boundingbox: graphFunctionData.boundingbox || [-5, 5, 5, -5],
             axis: true,
@@ -140,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         (graphFunctionData.functions || []).forEach(func => {
             if (func.type === 'expression') board.create('functiongraph', [func.expression], { strokeColor: 'blue', ...func.options });
-            else if (func.type === 'point') board.create('point', [func.x, func.y], { name: `(${func.x}, ${func.y})`, color: 'red', size: 3, ...func.options });
+            else if (func.type === 'point') board.create('point', [func.x, func.y], { name: func.options.name || `(${func.x}, ${func.y})`, color: 'red', size: 3, ...func.options });
         });
         (graphFunctionData.labels || []).forEach(label => {
             board.create('text', [label.x, label.y, label.text], { color: 'black', ...label.options});
@@ -151,3 +159,4 @@ document.addEventListener('DOMContentLoaded', () => {
     startTestBtn.addEventListener('click', () => generateProblems(true));
     submitTestBtn.addEventListener('click', submitAndGradeTest);
 });
+
