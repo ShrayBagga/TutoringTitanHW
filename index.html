@@ -25,10 +25,22 @@
     <main class="container">
         <aside class="sidebar">
             <h2>Settings</h2>
+            
             <div class="setting-section">
                 <h3>6th Grade Topics</h3>
                 <div id="topic-checklist">
-                    <!-- Checkboxes will be dynamically inserted here by main.js -->
+                    <label><input type="checkbox" name="topic" value="6M1"> Arithmetic Operations</label>
+                    <label><input type="checkbox" name="topic" value="6M2"> Fraction & Decimal Operations</label>
+                    <label><input type="checkbox" name="topic" value="6M3"> The Number System</label>
+                    <label><input type="checkbox" name="topic" value="6M4"> Algebraic Expressions</label>
+                    <label><input type="checkbox" name="topic" value="6M5"> Equations & Inequalities</label>
+                    <label><input type="checkbox" name="topic" value="6M6"> Geometry: Area & Volume</label>
+                    <label><input type="checkbox" name="topic" value="6M7"> The Coordinate Plane</label>
+                    <label><input type="checkbox" name="topic" value="6M8"> Data & Statistics Introduction</label>
+                    <label><input type="checkbox" name="topic" value="6M9"> Measures of Central Tendency</label>
+                    <label><input type="checkbox" name="topic" value="6M10"> Ratios, Rates & Percentages</label>
+                    <label><input type="checkbox" name="topic" value="6M11"> Data Displays</label>
+                    <label><input type="checkbox" name="topic" value="6M12"> Basic Probability</label>
                 </div>
             </div>
 
@@ -36,11 +48,11 @@
                 <h3>Problem Count</h3>
                 <input type="number" id="problemCount" value="10" min="1" max="50">
             </div>
+            
             <div class="button-group">
                 <button id="generateProblems">Practice</button>
                 <button id="startTest">Take Test</button>
             </div>
-            <button id="printProblems" style="display: none; margin-top: 10px;">Print Problems (PDF)</button>
         </aside>
 
         <section class="problem-area">
@@ -56,4 +68,3 @@
     <script type="module" src="main.js"></script>
 </body>
 </html>
-
