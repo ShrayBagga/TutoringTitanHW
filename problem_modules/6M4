@@ -1,0 +1,101 @@
+// --- Helper Functions ---
+function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+const problemGenerators = [
+    () => {
+        const val = getRandomInt(5, 20);
+        return { problem: `Write an algebraic expression for "a number \\(x\\) increased by \\(${val}\\)".`, answer: `\\(x + ${val}\\)`, checkAnswer: `x+${val}` };
+    },
+    () => {
+        const val = getRandomInt(3, 15);
+        return { problem: `Write an expression for "\\(${val}\\) less than a number \\(y\\)".`, answer: `\\(y - ${val}\\)`, checkAnswer: `y-${val}` };
+    },
+    () => {
+        const val = getRandomInt(2, 7);
+        return { problem: `Write an expression for "the product of \\(${val}\\) and a number \\(n\\)".`, answer: `\\(${val}n\\)`, checkAnswer: `${val}n` };
+    },
+    () => {
+        const val = getRandomInt(3, 10);
+        return { problem: `Write an expression for "a number \\(q\\) divided by \\(${val}\\)".`, answer: `\\(\\frac{q}{${val}}\\)` , checkAnswer: `q/${val}`};
+    },
+    () => {
+        const c = getRandomInt(2, 5); const v = getRandomInt(3, 8);
+        return { problem: `Evaluate the expression \\(${c}x\\) for \\(x = ${v}\\).`, answer: `\\(${c*v}\\)`, checkAnswer: (c*v).toString() };
+    },
+    () => {
+        const v = getRandomInt(10, 20); const c = getRandomInt(2, 9);
+        return { problem: `Evaluate \\(y - ${c}\\) for \\(y = ${v}\\).`, answer: `\\(${v-c}\\)`, checkAnswer: (v-c).toString() };
+    },
+    () => {
+        const c1 = getRandomInt(2, 5); const c2 = getRandomInt(3, 6); const x = 'x';
+        return { problem: `Simplify the expression by combining like terms: \\(${c1}${x} + ${c2}${x}\\).`, answer: `\\(${c1+c2}${x}\\)`, checkAnswer: `${c1+c2}${x}` };
+    },
+    () => {
+        const c1 = getRandomInt(5, 10); const c2 = getRandomInt(2, 4); const n1 = getRandomInt(3, 8);
+        return { problem: `Simplify: \\(${c1}y + ${n1} - ${c2}y\\).`, answer: `\\(${c1-c2}y + ${n1}\\)`, checkAnswer: `${c1-c2}y+${n1}` };
+    },
+    () => {
+        const num = getRandomInt(2, 5);
+        return { problem: `Identify the coefficient in the term \\(${num}z\\).`, answer: `\\(${num}\\)`, checkAnswer: num.toString() };
+    },
+    () => {
+        const c = getRandomInt(2, 4); const v = getRandomInt(3, 5);
+        return { problem: `Are \\(${c}x\\) and \\(${v}y\\) like terms?`, answer: `No`, checkAnswer: "No", hint: "Like terms must have the exact same variable part." };
+    },
+    () => {
+        const c = getRandomInt(2, 4); const p = getRandomInt(2, 3);
+        return { problem: `Identify the terms in the expression \\(${c}a + ${p}\\).`, answer: `The terms are \\(${c}a\\) and \\(${p}\\).`, checkAnswer: `${c}a,${p}` };
+    },
+    () => {
+        const a = getRandomInt(2, 4); const b = getRandomInt(3, 5);
+        return { problem: `Use the distributive property to write an equivalent expression for \\(${a}(x + ${b})\\).`, answer: `\\(${a}x + ${a*b}\\)`, checkAnswer: `${a}x+${a*b}` };
+    },
+    () => {
+        const c1 = 2 * getRandomInt(2, 5); const c2 = 3 * getRandomInt(2, 5); const gcf = gcd(c1, c2);
+        return { problem: `Factor the expression \\(${c1}x + ${c2}\\) by finding the GCF.`, answer: `\\(${gcf}(${c1/gcf}x + ${c2/gcf})\\)`, checkAnswer: `${gcf}(${c1/gcf}x+${c2/gcf})` };
+    },
+    () => {
+        const age = getRandomInt(10, 15);
+        return { problem: `If Maria is \\(y\\) years old and her brother is \\(${age}\\) years older, write an expression for her brother's age.`, answer: `\\(y + ${age}\\)`, checkAnswer: `y+${age}` };
+    },
+    () => {
+        const cost = getRandomInt(3, 8);
+        return { problem: `A pen costs \\($${cost}\\). Write an expression for the cost of \\(p\\) pens.`, answer: `\\(${cost}p\\)`, checkAnswer: `${cost}p` };
+    },
+    () => {
+        const base = getRandomInt(2, 5); const exp = getRandomInt(2, 3); const val = getRandomInt(1, 3);
+        const result = base * Math.pow(val, exp);
+        return { problem: `Evaluate \\(${base}n^{${exp}}\\) for \\(n = ${val}\\).`, answer: `\\(${result}\\)`, checkAnswer: result.toString() };
+    },
+    () => {
+        const expr = `5x + 3y - 2x + 4`;
+        return { problem: `In the expression \\(${expr}\\), identify the constant term.`, answer: `The constant is \\(4\\).`, checkAnswer: "4" };
+    },
+    () => {
+        const s = getRandomInt(5, 10);
+        return { problem: `The side length of a square is \\(s\\). Write an expression for its perimeter.`, answer: `\\(4s\\)`, checkAnswer: `4s` };
+    },
+    () => {
+        const total = getRandomInt(20, 30);
+        return { problem: `You have \\(${total}\\) cookies and eat \\(c\\) of them. Write an expression for how many are left.`, answer: `\\(${total} - c\\)`, checkAnswer: `${total}-c` };
+    },
+    () => {
+        const n1 = getRandomInt(2, 5); const n2 = getRandomInt(2, 5);
+        return { problem: `Write an expression for "twice a number \\(x\\) decreased by \\(${n2}\\)".`, answer: `\\(2x - ${n2}\\)`, checkAnswer: `2x-${n2}` };
+    }
+];
+
+function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+
+function generate(settings) {
+    const problemType = getRandomInt(0, problemGenerators.length - 1);
+    const generator = problemGenerators[problemType];
+    const problemData = generator();
+    return { ...problemData, hint: problemData.hint || "A variable represents an unknown number." };
+}
+
+export const module = {
+    topicId: 'g6_algebraic_expressions',
+    topicName: 'Algebraic Expressions',
+    generateProblem: generate
+};

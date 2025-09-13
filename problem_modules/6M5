@@ -1,0 +1,115 @@
+// --- Helper Functions ---
+function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function formatAnswer(val, p=2) { return parseFloat(val.toFixed(p)).toString().replace(/\.00$/, ''); }
+
+
+const problemGenerators = [
+    () => {
+        const x = getRandomInt(5, 15);
+        const add = getRandomInt(10, 20);
+        return { problem: `Solve for \\(x\\): \\(x + ${add} = ${x + add}\\)`, answer: `\\(x = ${x}\\)`, checkAnswer: x.toString() };
+    },
+    () => {
+        const y = getRandomInt(20, 30);
+        const sub = getRandomInt(5, 15);
+        return { problem: `Solve for \\(y\\): \\(y - ${sub} = ${y - sub}\\)`, answer: `\\(y = ${y}\\)`, checkAnswer: y.toString() };
+    },
+    () => {
+        const n = getRandomInt(3, 8);
+        const mult = getRandomInt(4, 9);
+        return { problem: `Solve for \\(n\\): \\(${mult}n = ${n * mult}\\)`, answer: `\\(n = ${n}\\)`, checkAnswer: n.toString() };
+    },
+    () => {
+        const q = getRandomInt(5, 10);
+        const div = getRandomInt(2, 5);
+        return { problem: `Solve for \\(q\\): \\(\\frac{q}{${div}} = ${q / div}\\)`, answer: `\\(q = ${q}\\)`, checkAnswer: q.toString() };
+    },
+    () => {
+        const x = 3;
+        const add = 5;
+        return { problem: `Is \\(x=${x}\\) a solution to the equation \\(x + ${add} = 8\\)?`, answer: `Yes`, checkAnswer: "Yes" };
+    },
+    () => {
+        const n = 10;
+        const mult = 2;
+        return { problem: `Is \\(n=${n}\\) a solution to \\(${mult}n = 22\\)?`, answer: `No`, checkAnswer: "No" };
+    },
+    () => {
+        const x = getRandomInt(1, 5);
+        return { problem: `Represent "a number is less than 5" as an inequality.`, answer: `\\(x < 5\\)`, checkAnswer: `x<5` };
+    },
+    () => {
+        const age = 12;
+        return { problem: `To ride the roller coaster, you must be at least \\(${age}\\) years old. Write an inequality for the age \\(a\\).`, answer: `\\(a \\ge ${age}\\)`, checkAnswer: `a>=${age}` };
+    },
+    () => {
+        const val = getRandomInt(3, 8);
+        return { problem: `Graph the inequality \\(x > ${val}\\) on a number line.`, answer: `An open circle at \\(${val}\\) with an arrow pointing to the right.`, checkAnswer: `open circle at ${val} arrow right`, isGraph: false };
+    },
+    () => {
+        const val = getRandomInt(0, 5);
+        return { problem: `Graph \\(n \\le ${val}\\).`, answer: `A closed circle at \\(${val}\\) with an arrow pointing to the left.`, checkAnswer: `closed circle at ${val} arrow left`, isGraph: false };
+    },
+    () => {
+        const cost = getRandomInt(2, 4);
+        const total = getRandomInt(10, 20) * cost;
+        const items = total / cost;
+        return { problem: `Sarah bought several books that cost \\($${cost}\\) each. She spent a total of \\($${total}\\). Write and solve an equation to find how many books \\(b\\) she bought.`, answer: `\\(${cost}b = ${total}\\); \\(b = ${items}\\) books`, checkAnswer: items.toString() };
+    },
+    () => {
+        const start = getRandomInt(15, 25);
+        const goal = getRandomInt(40, 50);
+        const needed = goal - start;
+        return { problem: `You have \\($${start}\\) and want to save at least \\($${goal}\\) for a new game. Write an inequality for the amount of money \\(m\\) you still need to save.`, answer: `\\(m \\ge ${needed}\\)`, checkAnswer: `m>=${needed}` };
+    },
+    () => {
+        const x = getRandomInt(2, 5);
+        const c1 = getRandomInt(2, 4); const c2 = getRandomInt(5, 8);
+        return { problem: `Solve the two-step equation: \\(${c1}x + ${c2} = ${c1*x+c2}\\).`, answer: `\\(x = ${x}\\)`, checkAnswer: x.toString() };
+    },
+    () => {
+        const d = "distance"; const r = "rate"; const t = "time";
+        return { problem: `The formula for distance is \\(d = rt\\). If a car travels at a rate of 50 mph for 3 hours, what is the distance traveled?`, answer: `\\(d = 150\\) miles`, checkAnswer: "150" };
+    },
+    () => {
+        const x = 'x';
+        const a = getRandomInt(2,5); const b = getRandomInt(2,5); const c = getRandomInt(10,20);
+        return { problem: `Write an equation for: "The sum of a number and \\(${a}\\) is \\(${b}\\)."`, answer: `\\(x + ${a} = ${b}\\)`, checkAnswer: `x+${a}=${b}` };
+    },
+    () => {
+        const val = getRandomInt(5, 10);
+        return { problem: `List three possible solutions for the inequality \\(y > ${val}\\).`, answer: `Any numbers greater than \\(${val}\\), e.g., \\(${val+1}, ${val+2}, ${val+3}\\).`, checkAnswer: `${val+1},${val+2},${val+3}` };
+    },
+    () => {
+        const side = getRandomInt(4, 8);
+        const perimeter = 4 * side;
+        return { problem: `The perimeter of a square is \\(${perimeter}\\) cm. Write and solve an equation to find the side length \\(s\\).`, answer: `\\(4s = ${perimeter}\\); \\(s = ${side}\\) cm`, checkAnswer: side.toString() };
+    },
+    () => {
+        const max = getRandomInt(25, 40);
+        return { problem: `A suitcase must weigh no more than \\(${max}\\) pounds. Write an inequality for the weight \\(w\\).`, answer: `\\(w \\le ${max}\\)`, checkAnswer: `w<=${max}` };
+    },
+    () => {
+        const a = 'apples'; const o = 'oranges';
+        const numA = getRandomInt(3, 6);
+        const total = numA + getRandomInt(2, 5);
+        return { problem: `A basket has \\(${total}\\) fruits. \\(${numA}\\) are apples. Write an equation to find the number of oranges, \\(o\\).`, answer: `\\(${numA} + o = ${total}\\)`, checkAnswer: `${numA}+o=${total}` };
+    },
+    () => {
+        const x = getRandomInt(5, 10); const y = getRandomInt(10, 15);
+        return { problem: `The variables \\(x\\) and \\(y\\) have a relationship where \\(y = x + 5\\). If \\(x=${x}\\), what is \\(y\\)?`, answer: `\\(y = ${x+5}\\)`, checkAnswer: (x+5).toString() };
+    }
+];
+
+function generate(settings) {
+    const problemType = getRandomInt(0, problemGenerators.length - 1);
+    const generator = problemGenerators[problemType];
+    const problemData = generator();
+    return { ...problemData, hint: problemData.hint || "Use inverse operations to isolate the variable." };
+}
+
+export const module = {
+    topicId: 'g6_equations_inequalities',
+    topicName: 'Equations & Inequalities',
+    generateProblem: generate
+};
