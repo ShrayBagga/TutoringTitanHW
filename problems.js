@@ -1,115 +1,3 @@
-// Helper functions
-
-// Helper functions
-export function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-export function getRandomArbitrary(min, max) {
-    return Math.random() * (max - min) + min;
-}
-
-export function formatAnswer(value, decimalPlaces) {
-    if (typeof value === 'number') {
-        return parseFloat(value.toFixed(decimalPlaces)).toString();
-    }
-    return value;
-}
-
-export function formatFraction(numerator, denominator) {
-    if (denominator === 0) return 'Undefined';
-    if (numerator % denominator === 0) {
-        return (numerator / denominator).toString();
-    }
-    const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
-    const commonDivisor = gcd(Math.abs(numerator), Math.abs(denominator));
-    const simpNum = numerator / commonDivisor;
-    const simpDen = denominator / commonDivisor;
-    if (simpDen < 0) {
-        return `\\frac{${-simpNum}}{${-simpDen}}`;
-    }
-    return `\\frac{${simpNum}}{${simpDen}}`;
-}
-
-export function formatPolynomial(terms) {
-    let polyStr = '';
-    if (terms.length === 0) {
-        return '0';
-    }
-
-    for (let i = terms.length - 1; i >= 0; i--) {
-        const coeff = terms[i];
-        if (coeff === 0) {
-            continue;
-        }
-
-        let termStr = '';
-        const absCoeff = Math.abs(coeff);
-        const sign = coeff > 0 ? '+' : '-';
-
-        if (polyStr !== '' && coeff > 0) {
-             polyStr += ` + `;
-        } else if (coeff < 0) {
-             polyStr += ` - `;
-        }
-        
-        if (i === 0) {
-            termStr = `${absCoeff}`;
-        } else if (i === 1) {
-            termStr = (absCoeff === 1) ? 'x' : `${absCoeff}x`;
-        } else {
-            termStr = (absCoeff === 1) ? `x^${i}` : `${absCoeff}x^${i}`;
-        }
-
-        polyStr += termStr;
-    }
-    
-    if (polyStr.startsWith(' + ')) {
-        polyStr = polyStr.substring(3);
-    }
-    return polyStr.trim() || '0';
-}
-
-
-// JSXGraph related functions
-export const JXGBOARDS = {};
-
-export function renderAllGraphs() {
-    document.querySelectorAll('.jxgbox').forEach(box => {
-        if (JXGBOARDS[box.id]) {
-            JXGBOARDS[box.id] = null;
-        }
-        box.style.display = 'none'; // Hide all graph boxes initially
-    });
-}
-
-export function renderGraph(graphId, graphFunctionData) {
-    const graphBox = document.getElementById(graphId);
-    if (!graphBox) {
-        console.error(`Graph container with ID ${graphId} not found.`);
-        return;
-    }
-
-    graphBox.style.display = 'block';
-
-    const board = JXG.JSXGraph.initBoard(graphId, {
-        boundingbox: graphFunctionData.boundingbox || [-10, 10, 10, -10],
-        axis: true,
-        showCopyright: false,
-    });
-    JXGBOARDS[graphId] = board;
-
-    graphFunctionData.functions.forEach(func => {
-        if (func.type === 'expression') {
-            board.create('functiongraph', [func.expression], func.options || { strokeColor: 'blue', strokeWidth: 2 });
-        } else if (func.type === 'point') {
-            board.create('point', [func.x, func.y], func.options || { name: `(${func.x}, ${func.y})`, color: 'red', size: 3 });
-        }
-    });
-}
-
 // Problem generation dispatchers
 export function generateGrade6Problem(topic, settings) {
     switch (topic) {
@@ -249,40 +137,36 @@ function generateArithmeticOperations(settings) {
     const type = getRandomInt(0, 3);
     let num1 = getRandomInt(1, 100);
     let num2 = getRandomInt(1, 100);
-    let problem, answer, checkAnswer, hint;
+    let problem, answer, hint;
 
     switch (type) {
         case 0:
             problem = `What is \\(${num1} + ${num2}\\)?`;
-            checkAnswer = (num1 + num2).toString();
-            answer = `\\(${checkAnswer}\\)`;
+            answer = `\\(${(num1 + num2).toString()}\\)`;
             hint = "Add the two numbers together.";
             break;
         case 1:
             if (num1 < num2) [num1, num2] = [num2, num1];
             problem = `What is \\(${num1} - ${num2}\\)?`;
-            checkAnswer = (num1 - num2).toString();
-            answer = `\\(${checkAnswer}\\)`;
+            answer = `\\(${(num1 - num2).toString()}\\)`;
             hint = "Subtract the second number from the first.";
             break;
         case 2:
             num1 = getRandomInt(1, 12);
             num2 = getRandomInt(1, 12);
             problem = `What is \\(${num1} \\times ${num2}\\)?`;
-            checkAnswer = (num1 * num2).toString();
-            answer = `\\(${checkAnswer}\\)`;
+            answer = `\\(${(num1 * num2).toString()}\\)`;
             hint = "Multiply the two numbers.";
             break;
         case 3:
             num2 = getRandomInt(1, 10);
             num1 = num2 * getRandomInt(2, 12);
             problem = `What is \\(${num1} \\div ${num2}\\)?`;
-            checkAnswer = (num1 / num2).toString();
-            answer = `\\(${checkAnswer}\\)`;
+            answer = `\\(${(num1 / num2).toString()}\\)`;
             hint = "Divide the first number by the second.";
             break;
     }
-    return { problem, answer, checkAnswer, hint };
+    return { problem, answer, hint };
 }
 
 function generateExpressionsEquationsBasic(settings) {
@@ -291,7 +175,7 @@ function generateExpressionsEquationsBasic(settings) {
     // In your project, you would keep the entire contents of the original file
     // and just apply the changes shown.
     const type = getRandomInt(0, 2);
-    let problem, answer, checkAnswer, hint;
+    let problem, answer, hint;
 
     switch (type) {
         case 0:
@@ -300,7 +184,6 @@ function generateExpressionsEquationsBasic(settings) {
             const coeff2 = getRandomInt(2, 10);
             const const2 = getRandomInt(1, 15);
             problem = `Simplify the expression: \\(${coeff1}x + ${const1} + ${coeff2}x - ${const2}\\).`;
-            checkAnswer = `${coeff1 + coeff2}x+${const1 - const2}`.replace('+-', '-');
             answer = `\\(${coeff1 + coeff2}x + ${const1 - const2}\\)`;
             hint = "Combine like terms (terms with 'x' and constant terms separately).";
             break;
@@ -309,7 +192,6 @@ function generateExpressionsEquationsBasic(settings) {
             const eqNum = getRandomInt(2, 10);
             const result = xVal + eqNum;
             problem = `Solve for \\(x\\): \\(x + ${eqNum} = ${result}\\).`;
-            checkAnswer = xVal.toString();
             answer = `\\(x = ${xVal}\\)`;
             hint = "Use the inverse operation to isolate \\(x\\).";
             break;
@@ -318,12 +200,11 @@ function generateExpressionsEquationsBasic(settings) {
             const evalConst = getRandomInt(1, 10);
             const evalX = getRandomInt(-5, 5);
             problem = `Evaluate the expression \\(${evalCoeff}x + ${evalConst}\\) when \\(x = ${evalX}\\).`;
-            checkAnswer = (evalCoeff * evalX + evalConst).toString();
-            answer = `\\(${checkAnswer}\\)`;
+            answer = `\\(${(evalCoeff * evalX + evalConst).toString()}\\)`;
             hint = "Substitute the given value of \\(x\\) into the expression and simplify.";
             break;
     }
-    return { problem, answer, checkAnswer, hint };
+    return { problem, answer, hint };
 }
 
 // ... All other problem generation functions from your original file would follow here ...
@@ -1296,7 +1177,6 @@ function generateRatiosProportions(settings) {
             const x = getRandomInt(1, 10);
             const c = b * x;
             problem = `Solve for \\(x\\): \\(\\frac{${a}}{${b}} = \\frac{x}{${c}}\\)`;
-            answer = `x = ${a * x}`; // This looks like a logical error, should be a*c/b
             // Corrected answer logic:
             answer = `x = ${formatAnswer((a * c) / b, settings.decimalPlaces)}`;
             hint = "Cross-multiply and then solve for \\(x\\).";
@@ -2869,7 +2749,7 @@ function generateCalculusIntegrals(settings) {
     let problem, answer, hint;
 
     switch (type) {
-        case 0: { // Added curly braces to create a new block scope
+        case 0: {
             const coeff = getRandomInt(2, 10);
             const power = getRandomInt(1, 4);
             const newPower = power + 1;
@@ -2880,7 +2760,7 @@ function generateCalculusIntegrals(settings) {
             hint = "Use the power rule for integration: \\(\\int x^n dx = \\frac{x^{n+1}}{n+1} + C\\).";
             break;
         }
-        case 1: { // Added curly braces
+        case 1: {
             const lower = getRandomInt(0, 2);
             const upper = getRandomInt(lower + 1, lower + 4);
             const intCoeff = getRandomInt(1, 3);
@@ -2904,7 +2784,7 @@ function generateCalculusIntegrals(settings) {
             hint = "First find the antiderivative of the function. Then evaluate it at the upper and lower limits and subtract (Fundamental Theorem of Calculus).";
             break;
         }
-        case 2: { // Added curly braces
+        case 2: {
             const funcType = getRandomInt(0, 1);
             if (funcType === 0) {
                 problem = `Find the indefinite integral: \\(\\int e^x dx\\).`;
@@ -2917,11 +2797,11 @@ function generateCalculusIntegrals(settings) {
             }
             break;
         }
-        case 3: { // Added curly braces to create a new block scope
+        case 3: {
             const a = getRandomInt(2, 4);
             const b = getRandomInt(1, 5);
             const n = getRandomInt(2, 4);
-            const newPower = n + 1; // This declaration is now in its own block scope
+            const newPower = n + 1;
             const newCoeffNum = 1;
             const newCoeffDen = a * newPower;
             problem = `Evaluate the indefinite integral: \\(\\int (${a}x + ${b})^{${n}} dx\\).`;
@@ -2929,7 +2809,7 @@ function generateCalculusIntegrals(settings) {
             hint = "Use u-substitution. Let \\(u = ${a}x + ${b}\\). Then find \\(du\\).";
             break;
         }
-        case 4: { // Added curly braces
+        case 4: {
             const avgLower = getRandomInt(1, 3);
             const avgUpper = getRandomInt(avgLower + 1, avgLower + 3);
             const avgCoeff = getRandomInt(1, 3);

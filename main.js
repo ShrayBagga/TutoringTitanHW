@@ -186,8 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     gradeLevelRadios.forEach(radio => radio.addEventListener('change', updateUIAndLoadTopics));
-    challengeModeCheckbox.addEventListener('change', updateUIAndLoadTopics));
-    satPrepModeCheckbox.addEventListener('change', updateUIAndLoadTopics));
+    challengeModeCheckbox.addEventListener('change', updateUIAndLoadTopics);
+    satPrepModeCheckbox.addEventListener('change', updateUIAndLoadTopics);
     updateUIAndLoadTopics();
 
     const generateProblems = (isTestMode = false) => {
