@@ -34,15 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const mathTopicSelect = document.getElementById('mathTopic');
     const problemCountInput = document.getElementById('problemCount');
     const generateProblemsBtn = document.getElementById('generateProblems');
+    const startTestBtn = document.getElementById('startTest');
     const printProblemsBtn = document.getElementById('printProblems');
+    const submitTestBtn = document.getElementById('submitTestBtn');
     const problemsContainer = document.getElementById('problemsContainer');
+    const resultsContainer = document.getElementById('resultsContainer');
     const difficultyAdjustment = document.getElementById('difficultyAdjustment');
-
-    console.log('Elements check:');
-    console.log('gradeLevelRadios count:', gradeLevelRadios.length);
-    console.log('challengeModeCheckbox element:', challengeModeCheckbox);
-    console.log('satPrepModeCheckbox element:', satPrepModeCheckbox);
-    console.log('mathTopicSelect element:', mathTopicSelect);
 
     let generatedProblemsData = [];
 
@@ -92,7 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const challengeTopics = {
-
+        grade9: [
+            { value: 'challenge_complex_algebra', text: 'Complex Algebra' },
+            { value: 'challenge_advanced_number_theory', text: 'Advanced Number Theory' }
+        ],
         grade10: [
             { value: 'challenge_advanced_geometry', text: 'Advanced Geometry' },
             { value: 'challenge_vector_basics', text: 'Vector Basics' }
@@ -123,70 +123,50 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     function updateUIAndLoadTopics() {
-        console.log('--- updateUIAndLoadTopics Called ---');
         const selectedGradeRadio = document.querySelector('input[name="gradeLevel"]:checked');
         const selectedGrade = selectedGradeRadio ? selectedGradeRadio.value : null;
         const inChallengeMode = challengeModeCheckbox.checked;
         const inSatPrepMode = satPrepModeCheckbox.checked;
 
-        console.log(`Current Selections: Grade=${selectedGrade}, Challenge=${inChallengeMode}, SAT=${inSatPrepMode}`);
-
         // Logic to ensure mutual exclusivity/priority
         if (inSatPrepMode) {
-            // If SAT Prep is active, uncheck all grade radios and challenge mode
             gradeLevelRadios.forEach(radio => radio.checked = false);
             challengeModeCheckbox.checked = false;
             difficultyAdjustment.style.display = 'none';
-            console.log('Mode: SAT Prep is active. Grade and Challenge unchecked.');
         } else if (inChallengeMode && selectedGrade) {
-            // If Challenge Mode is active AND a grade is selected
-            satPrepModeCheckbox.checked = false; // Uncheck SAT Prep
+            satPrepModeCheckbox.checked = false; 
             difficultyAdjustment.style.display = 'block';
-            console.log(`Mode: Challenge Mode active for ${selectedGrade}. SAT Prep unchecked.`);
         } else if (selectedGrade) {
-            // If only a grade is selected (no challenge, no SAT prep)
-            challengeModeCheckbox.checked = false; // Uncheck challenge
-            satPrepModeCheckbox.checked = false; // Uncheck SAT Prep
-            difficultyAdjustment.style.display = 'none'; // Difficulty is for challenge mode
-            console.log(`Mode: Standard Grade ${selectedGrade} is active.`);
-        } else {
-            // No specific mode or grade selected (e.g., on initial load before any grade is checked)
             challengeModeCheckbox.checked = false;
             satPrepModeCheckbox.checked = false;
             difficultyAdjustment.style.display = 'none';
-            console.log('Mode: No grade or specific mode selected, resetting modes.');
+        } else {
+            challengeModeCheckbox.checked = false;
+            satPrepModeCheckbox.checked = false;
+            difficultyAdjustment.style.display = 'none';
         }
-
         loadTopicsInternal();
     }
 
     function loadTopicsInternal() {
-        console.log('--- loadTopicsInternal Called ---');
         const selectedGrade = document.querySelector('input[name="gradeLevel"]:checked')?.value;
         const inChallengeMode = challengeModeCheckbox.checked;
         const inSatPrepMode = satPrepModeCheckbox.checked;
 
-        mathTopicSelect.innerHTML = '<option value="">Select a topic</option>'; // Clear existing options
+        mathTopicSelect.innerHTML = '<option value="">Select a topic</option>';
 
         let currentTopics = [];
         if (inSatPrepMode) {
             currentTopics = satPrepTopics;
-            console.log('Topics source: SAT Prep');
         } else if (selectedGrade) {
             if (inChallengeMode && challengeTopics[selectedGrade]) {
                 currentTopics = challengeTopics[selectedGrade];
-                console.log('Topics source: Challenge Mode for', selectedGrade);
             } else {
-                currentTopics = topics[selectedGrade];
-                console.log('Topics source: Standard Topics for', selectedGrade);
+                currentTopics = topics[selectedGrade] || [];
             }
-        } else {
-            console.log('Topics source: No active selection, currentTopics remains empty.');
         }
 
-        console.log('Current Topics array before population:', currentTopics);
-
-        if (currentTopics && currentTopics.length > 0) {
+        if (currentTopics.length > 0) {
             const mixOption = document.createElement('option');
             mixOption.value = 'mix_all_topics';
             mixOption.textContent = 'Mix of All Topics';
@@ -199,26 +179,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 mathTopicSelect.appendChild(option);
             });
             mathTopicSelect.disabled = false;
-            mathTopicSelect.value = 'mix_all_topics'; // Select "Mix of All Topics" by default
-            console.log('Topic selector populated and enabled. "Mix of All Topics" selected.');
+            mathTopicSelect.value = 'mix_all_topics';
         } else {
             mathTopicSelect.disabled = true;
-            console.log('No topics available, topic selector disabled.');
         }
     }
 
-    // Attach event listeners
     gradeLevelRadios.forEach(radio => radio.addEventListener('change', updateUIAndLoadTopics));
-    challengeModeCheckbox.addEventListener('change', updateUIAndLoadTopics);
-    satPrepModeCheckbox.addEventListener('change', updateUIAndLoadTopics);
-
-    // Initial setup: Call updateUIAndLoadTopics once to populate the dropdown
-    // This is crucial for the initial state when the page loads.
+    challengeModeCheckbox.addEventListener('change', updateUIAndLoadTopics));
+    satPrepModeCheckbox.addEventListener('change', updateUIAndLoadTopics));
     updateUIAndLoadTopics();
-    console.log('--- Initial updateUIAndLoadTopics call completed ---');
 
-    // --- Problem Generation Button Logic ---
-    generateProblemsBtn.addEventListener('click', () => {
+    const generateProblems = (isTestMode = false) => {
         const selectedGrade = document.querySelector('input[name="gradeLevel"]:checked')?.value;
         const selectedTopic = mathTopicSelect.value;
         const problemCount = parseInt(problemCountInput.value, 10);
@@ -226,33 +198,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const inSatPrepMode = satPrepModeCheckbox.checked;
         const difficulty = document.querySelector('input[name="difficulty"]:checked')?.value || 'medium';
 
-        console.log('Generate Problems Clicked. Current settings:', { selectedGrade, selectedTopic, problemCount, inChallengeMode, inSatPrepMode, difficulty });
-
         if (!selectedTopic || selectedTopic === '') {
             problemsContainer.innerHTML = '<p style="color: red;">Please select a topic.</p>';
-            printProblemsBtn.style.display = 'none';
-            console.log('Error: No topic selected.');
             return;
         }
-        if (isNaN(problemCount) || problemCount <= 0) {
+        if (isNaN(problemCount) || problemCount <= 0 || problemCount > 20) {
             problemsContainer.innerHTML = '<p style="color: red;">Please enter a valid problem count (1-20).</p>';
-            printProblemsBtn.style.display = 'none';
-            console.log('Error: Invalid problem count.');
             return;
         }
 
         problemsContainer.innerHTML = '';
+        resultsContainer.innerHTML = '';
+        resultsContainer.style.display = 'none';
         generatedProblemsData = [];
 
-        printProblemsBtn.style.display = 'block';
+        printProblemsBtn.style.display = isTestMode ? 'none' : 'block';
+        submitTestBtn.style.display = isTestMode ? 'block' : 'none';
 
         const settings = {
             decimalPlaces: 2,
-            polyMaxDegree: 4,
-            polyMaxCoeff: 10,
-            trigMaxCoeff: 5,
-            trigFreqMax: 4,
-            expLogMaxCoeff: 3,
             difficulty: difficulty
         };
 
@@ -265,139 +229,96 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (inSatPrepMode) {
                     availableTopicsForMix = satPrepTopics;
                 } else if (selectedGrade) {
-                    if (inChallengeMode && challengeTopics[selectedGrade]) {
-                        availableTopicsForMix = challengeTopics[selectedGrade];
-                    } else {
-                        availableTopicsForMix = topics[selectedGrade];
-                    }
+                    availableTopicsForMix = (inChallengeMode && challengeTopics[selectedGrade]) ? challengeTopics[selectedGrade] : topics[selectedGrade];
                 }
-
-                const actualSelectableTopics = availableTopicsForMix.filter(t =>
-                    t.value !== 'mix_all_topics' &&
-                    !t.text.includes('not yet implemented')
-                );
-
-                if (actualSelectableTopics.length === 0) {
-                    problemData = { problem: `No specific topics available for mixing in this selection.`, answer: 'N/A', hint: 'N/A' };
-                    console.warn('Mix of all topics selected, but no actual selectable topics found.');
-                } else {
+                const actualSelectableTopics = availableTopicsForMix.filter(t => t.value !== 'mix_all_topics');
+                if (actualSelectableTopics.length > 0) {
                     actualTopicToGenerate = actualSelectableTopics[getRandomInt(0, actualSelectableTopics.length - 1)].value;
-                    console.log(`Mix mode: Generating problem for topic: ${actualTopicToGenerate}`);
                 }
-            } else {
-                console.log(`Specific topic selected: ${actualTopicToGenerate}`);
             }
 
-
             try {
-                if (inSatPrepMode) {
+                 if (inSatPrepMode) {
                     problemData = generateSatPrepProblem(actualTopicToGenerate, settings);
                 } else if (inChallengeMode) {
                     switch (actualTopicToGenerate) {
-                        case 'challenge_complex_algebra':
-                            problemData = generateChallengeComplexAlgebra(settings);
-                            break;
-                        case 'challenge_advanced_number_theory':
-                            problemData = generateChallengeAdvancedNumberTheory(settings);
-                            break;
-                        case 'challenge_advanced_geometry':
-                            problemData = generateChallengeAdvancedGeometry(settings);
-                            break;
-                        case 'challenge_vector_basics':
-                            problemData = generateChallengeVectorBasics(settings);
-                            break;
-                        case 'challenge_complex_functions':
-                            problemData = generateChallengeComplexFunctions(settings);
-                            break;
-                        case 'challenge_advanced_trig_identities':
-                            problemData = generateChallengeAdvancedTrigIdentities(settings);
-                            break;
-                        case 'challenge_optimization':
-                            problemData = generateChallengeOptimization(settings);
-                            break;
-                        case 'challenge_advanced_derivatives':
-                            problemData = generateChallengeAdvancedDerivatives(settings);
-                            break;
-                        case 'challenge_advanced_integrals':
-                            problemData = generateChallengeAdvancedIntegrals(settings);
-                            break;
-                        case 'challenge_differential_equations':
-                            problemData = generateChallengeDifferentialEquations(settings);
-                            break;
-                        default:
-                            problemData = { problem: `Error: Unknown challenge topic '${actualTopicToGenerate}'`, answer: 'N/A', hint: 'N/A' };
-                            console.error(`Unknown challenge topic: ${actualTopicToGenerate}`);
+                        case 'challenge_complex_algebra': problemData = generateChallengeComplexAlgebra(settings); break;
+                        case 'challenge_advanced_number_theory': problemData = generateChallengeAdvancedNumberTheory(settings); break;
+                        case 'challenge_advanced_geometry': problemData = generateChallengeAdvancedGeometry(settings); break;
+                        case 'challenge_vector_basics': problemData = generateChallengeVectorBasics(settings); break;
+                        case 'challenge_complex_functions': problemData = generateChallengeComplexFunctions(settings); break;
+                        case 'challenge_advanced_trig_identities': problemData = generateChallengeAdvancedTrigIdentities(settings); break;
+                        case 'challenge_optimization': problemData = generateChallengeOptimization(settings); break;
+                        case 'challenge_advanced_derivatives': problemData = generateChallengeAdvancedDerivatives(settings); break;
+                        case 'challenge_advanced_integrals': problemData = generateChallengeAdvancedIntegrals(settings); break;
+                        case 'challenge_differential_equations': problemData = generateChallengeDifferentialEquations(settings); break;
+                        default: problemData = { problem: `Error: Unknown challenge topic '${actualTopicToGenerate}'`, answer: 'N/A', hint: 'N/A' };
                     }
                 } else {
-                    switch (selectedGrade) { // This switch uses selectedGrade, not actualTopicToGenerate for dispatching
-                        case 'grade6':
-                            problemData = generateGrade6Problem(actualTopicToGenerate, settings);
-                            break;
-                        case 'grade7':
-                            problemData = generateGrade7Problem(actualTopicToGenerate, settings);
-                            break;
-                        case 'grade8':
-                            problemData = generateGrade8Problem(actualTopicToGenerate, settings);
-                            break;
-                        case 'grade9':
-                            problemData = generateAlgebraProblem(actualTopicToGenerate, settings);
-                            break;
-                        case 'grade10':
-                            problemData = generateGeometryProblem(actualTopicToGenerate, settings);
-                            break;
-                        case 'grade11':
-                            problemData = generatePrecalcProblem(actualTopicToGenerate, settings);
-                            break;
-                        case 'grade12':
-                            problemData = generateCalculusProblem(actualTopicToGenerate, settings);
-                            break;
-                        default:
-                            problemData = { problem: `Error: No grade selected or unknown topic '${actualTopicToGenerate}' for grade ${selectedGrade}`, answer: 'N/A', hint: 'N/A' };
-                            console.error(`Unknown standard topic for grade ${selectedGrade}: ${actualTopicToGenerate}`);
+                    switch (selectedGrade) {
+                        case 'grade6': problemData = generateGrade6Problem(actualTopicToGenerate, settings); break;
+                        case 'grade7': problemData = generateGrade7Problem(actualTopicToGenerate, settings); break;
+                        case 'grade8': problemData = generateGrade8Problem(actualTopicToGenerate, settings); break;
+                        case 'grade9': problemData = generateAlgebraProblem(actualTopicToGenerate, settings); break;
+                        case 'grade10': problemData = generateGeometryProblem(actualTopicToGenerate, settings); break;
+                        case 'grade11': problemData = generatePrecalcProblem(actualTopicToGenerate, settings); break;
+                        case 'grade12': problemData = generateCalculusProblem(actualTopicToGenerate, settings); break;
+                        default: problemData = { problem: `Error: No grade selected or unknown topic`, answer: 'N/A', hint: 'N/A' };
                     }
                 }
 
                 if (!problemData || !problemData.problem) {
-                    problemData = { problem: `Failed to generate problem for topic ${actualTopicToGenerate}.`, answer: 'N/A', hint: 'N/A' };
-                    console.error(`Problem data is incomplete or missing for topic: ${actualTopicToGenerate}`);
+                    problemData = { problem: `Failed to generate problem for topic ${actualTopicToGenerate}.`, answer: 'N/A', hint: 'N/A', checkAnswer: 'N/A' };
                 }
 
             } catch (error) {
                 console.error(`CRITICAL ERROR generating problem for topic ${actualTopicToGenerate}:`, error);
-                problemData = { problem: `Error generating problem. (${error.message})`, answer: 'N/A', hint: 'N/A' };
+                problemData = { problem: `Error generating problem. (${error.message})`, answer: 'N/A', hint: 'N/A', checkAnswer: 'N/A' };
             }
 
             const problemDiv = document.createElement('div');
             problemDiv.className = 'problem-item';
-            problemDiv.innerHTML = `
+            
+            let problemHTML = `
                 <div class="problem-text"><strong>Problem ${i + 1}:</strong> ${problemData.problem}</div>
                 ${problemData.graphId ? `<div id="${problemData.graphId}" class="jxgbox" style="width:300px; height:300px;"></div>` : ''}
-                <div class="solution-section">
-                    <button class="solution-toggle" data-target="hint-${i}">Show Hint</button>
-                    <button class="solution-toggle" data-target="solution-${i}">Show Solution</button>
-                    ${problemData.graphFunction ? `<button class="solution-toggle graph-toggle" data-graph-target="${problemData.graphId}" data-graph-function="${btoa(JSON.stringify(problemData.graphFunction))}" style="margin-left: 10px;">Show Graph</button>` : ''}
-                    <div id="hint-${i}" class="hint-content"><strong>Hint:</strong> ${problemData.hint}</div>
-                    <div id="solution-${i}" class="solution-content"><strong>Solution:</strong> ${problemData.answer}</div>
-                </div>
             `;
+
+            if (isTestMode) {
+                problemHTML += `
+                    <div class="answer-input">
+                        <label for="answer-${i}">Your Answer:</label>
+                        <input type="text" id="answer-${i}" name="answer-${i}">
+                    </div>
+                `;
+            } else {
+                 problemHTML += `
+                    <div class="solution-section">
+                        <button class="solution-toggle" data-target="hint-${i}">Show Hint</button>
+                        <button class="solution-toggle" data-target="solution-${i}">Show Solution</button>
+                        ${problemData.graphFunction ? `<button class="solution-toggle graph-toggle" data-graph-target="${problemData.graphId}" data-graph-function="${btoa(JSON.stringify(problemData.graphFunction))}" style="margin-left: 10px;">Show Graph</button>` : ''}
+                        <div id="hint-${i}" class="hint-content"><strong>Hint:</strong> ${problemData.hint}</div>
+                        <div id="solution-${i}" class="solution-content"><strong>Solution:</strong> ${problemData.answer}</div>
+                    </div>
+                `;
+            }
+
+            problemDiv.innerHTML = problemHTML;
             problemsContainer.appendChild(problemDiv);
 
             generatedProblemsData.push({
                 problem: `Problem ${i + 1}: ${problemData.problem}`,
-                answer: `Solution: ${problemData.answer}`,
-                hint: `Hint: ${problemData.hint}`
+                answer: problemData.answer,
+                checkAnswer: problemData.checkAnswer || problemData.answer.replace(/\\\(|\\\)|\\\[|\\\]/g, ''), // Fallback for checkAnswer
+                hint: problemData.hint
             });
         }
 
         if (window.MathJax) {
             window.MathJax.typesetPromise([problemsContainer]).then(() => {
-                console.log('MathJax typesetting complete.');
                 renderAllGraphs();
-            }).catch((err) => {
-                console.error('MathJax typesetting failed:', err);
-            });
+            }).catch((err) => console.error('MathJax typesetting failed:', err));
         } else {
-             console.warn('MathJax not loaded, skipping typesetting.');
              renderAllGraphs();
         }
 
@@ -412,139 +333,71 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         });
+    };
 
-        document.querySelectorAll('.graph-toggle').forEach(button => {
-            button.addEventListener('click', (event) => {
-                const graphTargetId = event.target.dataset.graphTarget;
-                const graphFuncData = JSON.parse(atob(event.target.dataset.graphFunction));
-                renderGraph(graphTargetId, graphFuncData);
-            });
+    function submitAndGradeTest() {
+        let score = 0;
+        let resultsHTML = '';
+
+        generatedProblemsData.forEach((problemData, index) => {
+            const userInput = document.getElementById(`answer-${index}`).value.trim();
+            const correctAnswer = String(problemData.checkAnswer).trim();
+            const isCorrect = userInput.toLowerCase() === correctAnswer.toLowerCase();
+            
+            if (isCorrect) {
+                score++;
+            }
+
+            resultsHTML += `
+                <div class="result-item ${isCorrect ? 'correct' : 'incorrect'}">
+                    <p><strong>${problemData.problem.split(':</strong> ')[1]}</strong></p>
+                    <p>Your Answer: ${userInput || '<i>No answer</i>'}</p>
+                    <p>Correct Answer: ${problemData.answer}</p>
+                </div>
+            `;
         });
-    });
+
+        const percentage = (score / generatedProblemsData.length) * 100;
+        resultsContainer.innerHTML = `<h3>Test Complete! Your score: ${score}/${generatedProblemsData.length} (${percentage.toFixed(1)}%)</h3>` + resultsHTML;
+        resultsContainer.style.display = 'block';
+        problemsContainer.style.display = 'none'; // Hide original problems
+        submitTestBtn.style.display = 'none';
+
+        if (window.MathJax) {
+            window.MathJax.typesetPromise([resultsContainer]);
+        }
+    }
+
+
+    generateProblemsBtn.addEventListener('click', () => generateProblems(false));
+    startTestBtn.addEventListener('click', () => generateProblems(true));
+    submitTestBtn.addEventListener('click', submitAndGradeTest);
 
     printProblemsBtn.addEventListener('click', () => {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-
         let y = 20;
-        const margin = 10;
-        const lineHeight = 7;
-        const problemIndent = 5;
-
         doc.setFontSize(16);
         doc.text("Titan Training - Math Practice Problems", doc.internal.pageSize.getWidth() / 2, y, { align: 'center' });
         y += 15;
-
         doc.setFontSize(10);
 
-        generatedProblemsData.forEach((problemData, index) => {
-            // PDF conversion: Remove MathJax delimiters and simplify LaTeX commands
-            const problemText = problemData.problem
-                .replace(/\\\((.*?)\\\)/g, '$1') // Inline math
-                .replace(/\\\[(.*?)\\\]/g, '$1') // Display math
-                .replace(/\\frac\{(.*?)\}\{(.*?)\}/g, '($1)/($2)') // Fractions
-                .replace(/\\sqrt\{(.*?)\}/g, 'sqrt($1)') // Square roots
-                .replace(/\\cdot/g, '*') // Dot product
-                .replace(/\\times/g, '*') // Multiplication
-                .replace(/\\div/g, '/') // Division
-                .replace(/\\approx/g, '~')
-                .replace(/\\ge/g, '>=')
-                .replace(/\\le/g, '<=')
-                .replace(/\\pm/g, '+/-')
-                .replace(/\\infty/g, 'infinity')
-                .replace(/\\alpha/g, 'alpha')
-                .replace(/\\beta/g, 'beta')
-                .replace(/\\phi/g, 'phi')
-                .replace(/\\theta/g, 'theta')
-                .replace(/\\sum/g, 'Sum')
-                .replace(/\\int/g, 'Integral')
-                .replace(/\\ln/g, 'ln')
-                .replace(/\\sin/g, 'sin')
-                .replace(/\\cos/g, 'cos')
-                .replace(/\\tan/g, 'tan')
-                .replace(/\\cot/g, 'cot')
-                .replace(/\\text\{(.*?)\}/g, '$1') // Text within LaTeX
-                .replace(/\\dots/g, '...')
-                .replace(/\\\\/g, '\n') // Newline in LaTeX
-                .replace(/\s*([+\-*\/=<>])\s*/g, ' $1 '); // Standardize spacing around operators
+        generatedProblemsData.forEach((problemData) => {
+             // Simplified PDF conversion logic
+            const problemText = problemData.problem.replace(/\\\(|\\\)|\\\[|\\\]/g, '');
+            const answerText = problemData.answer.replace(/\\\(|\\\)|\\\[|\\\]/g, '');
+            const hintText = problemData.hint.replace(/\\\(|\\\)|\\\[|\\\]/g, '');
 
-            const answerText = problemData.answer
-                 .replace(/\\\((.*?)\\\)/g, '$1')
-                .replace(/\\\[(.*?)\\\]/g, '$1')
-                .replace(/\\frac\{(.*?)\}\{(.*?)\}/g, '($1)/($2)')
-                .replace(/\\sqrt\{(.*?)\}/g, 'sqrt($1)')
-                .replace(/\\cdot/g, '*')
-                .replace(/\\times/g, '*')
-                .replace(/\\div/g, '/')
-                .replace(/\\approx/g, '~')
-                .replace(/\\ge/g, '>=')
-                .replace(/\\le/g, '<=')
-                .replace(/\\pm/g, '+/-')
-                .replace(/\\infty/g, 'infinity')
-                .replace(/\\alpha/g, 'alpha')
-                .replace(/\\beta/g, 'beta')
-                .replace(/\\phi/g, 'phi')
-                .replace(/\\theta/g, 'theta')
-                .replace(/\\sum/g, 'Sum')
-                .replace(/\\int/g, 'Integral')
-                .replace(/\\ln/g, 'ln')
-                .replace(/\\sin/g, 'sin')
-                .replace(/\\cos/g, 'cos')
-                .replace(/\\tan/g, 'tan')
-                .replace(/\\cot/g, 'cot')
-                .replace(/\\text\{(.*?)\}/g, '$1')
-                .replace(/\\dots/g, '...')
-                .replace(/\\\\/g, '\n')
-                .replace(/\s*([+\-*\/=<>])\s*/g, ' $1 ');
-
-            const hintText = problemData.hint
-                 .replace(/\\\((.*?)\\\)/g, '$1')
-                .replace(/\\\[(.*?)\\\]/g, '$1')
-                .replace(/\\frac\{(.*?)\}\{(.*?)\}/g, '($1)/($2)')
-                .replace(/\\sqrt\{(.*?)\}/g, 'sqrt($1)')
-                .replace(/\\cdot/g, '*')
-                .replace(/\\times/g, '*')
-                .replace(/\\div/g, '/')
-                .replace(/\\approx/g, '~')
-                .replace(/\\ge/g, '>=')
-                .replace(/\\le/g, '<=')
-                .replace(/\\pm/g, '+/-')
-                .replace(/\\infty/g, 'infinity')
-                .replace(/\\alpha/g, 'alpha')
-                .replace(/\\beta/g, 'beta')
-                .replace(/\\phi/g, 'phi')
-                .replace(/\\theta/g, 'theta')
-                .replace(/\\sum/g, 'Sum')
-                .replace(/\\int/g, 'Integral')
-                .replace(/\\ln/g, 'ln')
-                .replace(/\\sin/g, 'sin')
-                .replace(/\\cos/g, 'cos')
-                .replace(/\\tan/g, 'tan')
-                .replace(/\\cot/g, 'cot')
-                .replace(/\\text\{(.*?)\}/g, '$1')
-                .replace(/\\dots/g, '...')
-                .replace(/\\\\/g, '\n')
-                .replace(/\s*([+\-*\/=<>])\s*/g, ' $1 ');
-
-            if (y + (lineHeight * 3) + 20 > doc.internal.pageSize.getHeight() - margin) {
+            if (y > 280) { // Simple page break
                 doc.addPage();
-                y = margin;
+                y = 20;
             }
 
-            doc.setFontSize(10);
-            const problemLines = doc.splitTextToSize(problemText, doc.internal.pageSize.getWidth() - 2 * margin);
-            doc.text(problemLines, margin, y);
-            y += (problemLines.length * lineHeight);
-
-            doc.text(`Solution: _____________________________________________________`, margin + problemIndent, y + lineHeight);
-            y += 2 * lineHeight;
-
-            doc.text(`Hint: ${hintText}`, margin + problemIndent, y + lineHeight);
-            y += 2 * lineHeight;
-
-            doc.setDrawColor(200, 200, 200);
-            doc.line(margin, y, doc.internal.pageSize.getWidth() - margin, y);
-            y += 5;
+            const problemLines = doc.splitTextToSize(problemText, 180);
+            doc.text(problemLines, 10, y);
+            y += problemLines.length * 7;
+            doc.text(`Solution: ________________`, 15, y += 7);
+            y += 14;
         });
 
         doc.save('Titan_Training_Problems.pdf');
