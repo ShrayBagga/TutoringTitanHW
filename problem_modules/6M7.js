@@ -1,15 +1,29 @@
 // --- Helper Functions ---
 function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
+// --- Graphing Helper ---
+function createCoordinatePlaneGraph(elements) {
+    const graphId = `g-${Date.now()}`;
+    const graphFunction = {
+        functions: [],
+        boundingbox: [-10, 10, 10, -10],
+        labels: []
+    };
+    elements.forEach(el => {
+        graphFunction.functions.push(el);
+    });
+    return { graphId, graphFunction };
+}
+
 const problemGenerators = [
     () => { const x = getRandomInt(-5, 5); const y = getRandomInt(-5, 5); let quad = (x > 0 && y > 0) ? "I" : (x < 0 && y > 0) ? "II" : (x < 0 && y < 0) ? "III" : "IV"; if (x === 0 || y === 0) quad = "on an axis"; return { problem: `In which quadrant is the point (\\(${x}, ${y}\\)) located?`, answer: `Quadrant ${quad}`, checkAnswer: quad }; },
-    () => { const x = getRandomInt(-5, 5); const y = getRandomInt(-5, 5); return { problem: `Plot the point A(\\(${x}, ${y}\\)) on a coordinate plane.`, answer: `Start at origin, move ${Math.abs(x)} units ${x>0?'right':'left'}, then ${Math.abs(y)} units ${y>0?'up':'down'}.`, checkAnswer: "Plotted", isGraph: true, graphId: `graph-${Date.now()}`, graphFunction: { functions: [{ type: 'point', x: x, y: y, options: {name: 'A', size: 4, color: 'blue'} }], boundingbox: [-8, 8, 8, -8] }}; },
-    () => { const x = getRandomInt(-5, 5); const y = getRandomInt(-5, 5); return { problem: `What are the coordinates of a point reflected across the x-axis from (\\(${x}, ${y}\\))?`, answer: `(\\( ${x}, ${-y} \\))`, checkAnswer: `${x},${-y}` }; },
-    () => { const x = getRandomInt(-5, 5); const y = getRandomInt(-5, 5); return { problem: `What are the coordinates of a point reflected across the y-axis from (\\(${x}, ${y}\\))?`, answer: `(\\( ${-x}, ${y} \\))`, checkAnswer: `${-x},${y}` }; },
-    () => { const x1 = getRandomInt(-5, 5); const y1 = getRandomInt(-5, 5); const x2 = x1; const y2 = getRandomInt(y1+1, 8); return { problem: `Find the distance between the points (\\(${x1}, ${y1}\\)) and (\\(${x2}, ${y2}\\)).`, answer: `\\(${Math.abs(y2-y1)}\\) units`, checkAnswer: Math.abs(y2-y1).toString() }; },
-    () => { const x1 = getRandomInt(-5, 5); const y1 = getRandomInt(-5, 5); const x2 = getRandomInt(x1+1, 8); const y2 = y1; return { problem: `Find the distance between (\\(${x1}, ${y1}\\)) and (\\(${x2}, ${y2}\\)).`, answer: `\\(${Math.abs(x2-x1)}\\) units`, checkAnswer: Math.abs(x2-x1).toString() }; },
-    () => { const x = getRandomInt(2, 5); const y = getRandomInt(2, 5); return { problem: `A rectangle has vertices at (0,0), (\\(${x}\\),0), (0,\\(${y}\\)), and (\\(${x}, ${y}\\)). What is its perimeter?`, answer: `\\(${2*(x+y)}\\) units`, checkAnswer: (2*(x+y)).toString() }; },
-    () => { const x = getRandomInt(3, 6); return { problem: `A square has vertices at (0,0), (\\(${x}\\),0), (0,\\(${x}\\)), and (\\(${x}, ${x}\\)). What is its area?`, answer: `\\(${x*x}\\) square units`, checkAnswer: (x*x).toString() }; },
+    () => { const x = getRandomInt(-5, 5); const y = getRandomInt(-5, 5); const { graphId, graphFunction } = createCoordinatePlaneGraph([{ type: 'point', x: x, y: y, options: {name: 'A', size: 4, color: 'blue'} }]); return { problem: `Plot the point A(\\(${x}, ${y}\\)) on a coordinate plane.`, answer: `Start at origin, move ${Math.abs(x)} units ${x>0?'right':'left'}, then ${Math.abs(y)} units ${y>0?'up':'down'}.`, checkAnswer: "Plotted", isGraph: true, graphId, graphFunction }; },
+    () => { const x = getRandomInt(-5, 5); const y = getRandomInt(-5, 5); const { graphId, graphFunction } = createCoordinatePlaneGraph([{ type: 'point', x: x, y: y, options: {name: 'A'} }, { type: 'point', x: x, y: -y, options: {name: "A'"} }]); return { problem: `What are the coordinates of a point reflected across the x-axis from (\\(${x}, ${y}\\))?`, answer: `(\\( ${x}, ${-y} \\))`, checkAnswer: `${x},${-y}`, graphId, graphFunction }; },
+    () => { const x = getRandomInt(-5, 5); const y = getRandomInt(-5, 5); const { graphId, graphFunction } = createCoordinatePlaneGraph([{ type: 'point', x: x, y: y, options: {name: 'A'} }, { type: 'point', x: -x, y: y, options: {name: "A'"} }]); return { problem: `What are the coordinates of a point reflected across the y-axis from (\\(${x}, ${y}\\))?`, answer: `(\\( ${-x}, ${y} \\))`, checkAnswer: `${-x},${y}`, graphId, graphFunction }; },
+    () => { const x1 = getRandomInt(-5, 5); const y1 = getRandomInt(-5, 5); const x2 = x1; const y2 = getRandomInt(y1+1, 8); const { graphId, graphFunction } = createCoordinatePlaneGraph([{ type: 'line', point1: [x1, y1], point2: [x2, y2] }]); return { problem: `Find the distance between the points (\\(${x1}, ${y1}\\)) and (\\(${x2}, ${y2}\\)).`, answer: `\\(${Math.abs(y2-y1)}\\) units`, checkAnswer: Math.abs(y2-y1).toString(), graphId, graphFunction }; },
+    () => { const x1 = getRandomInt(-5, 5); const y1 = getRandomInt(-5, 5); const x2 = getRandomInt(x1+1, 8); const y2 = y1; const { graphId, graphFunction } = createCoordinatePlaneGraph([{ type: 'line', point1: [x1, y1], point2: [x2, y2] }]); return { problem: `Find the distance between (\\(${x1}, ${y1}\\)) and (\\(${x2}, ${y2}\\)).`, answer: `\\(${Math.abs(x2-x1)}\\) units`, checkAnswer: Math.abs(x2-x1).toString(), graphId, graphFunction }; },
+    () => { const x = getRandomInt(2, 5); const y = getRandomInt(2, 5); const vertices = [[0,0], [x,0], [x,y], [0,y]]; const { graphId, graphFunction } = createCoordinatePlaneGraph([{ type: 'polygon', vertices: vertices }]); return { problem: `A rectangle has vertices at (0,0), (\\(${x}\\),0), (0,\\(${y}\\)), and (\\(${x}, ${y}\\)). What is its perimeter?`, answer: `\\(${2*(x+y)}\\) units`, checkAnswer: (2*(x+y)).toString(), graphId, graphFunction }; },
+    () => { const x = getRandomInt(3, 6); const vertices = [[0,0], [x,0], [x,x], [0,x]]; const { graphId, graphFunction } = createCoordinatePlaneGraph([{ type: 'polygon', vertices: vertices }]); return { problem: `A square has vertices at (0,0), (\\(${x}\\),0), (0,\\(${x}\\)), and (\\(${x}, ${x}\\)). What is its area?`, answer: `\\(${x*x}\\) square units`, checkAnswer: (x*x).toString(), graphId, graphFunction }; },
     () => { const x1 = getRandomInt(-4, -1); const y1 = getRandomInt(-4, -1); return { problem: `If you start at point (\\(${x1}, ${y1}\\)) and move 3 units right and 4 units up, what are your new coordinates?`, answer: `(\\( ${x1+3}, ${y1+4} \\))`, checkAnswer: `${x1+3},${y1+4}` }; },
     () => { const x = getRandomInt(1, 5); return { problem: `The point (\\(${x}\\), y) is in Quadrant IV. Is y positive or negative?`, answer: `Negative`, checkAnswer: "Negative" }; },
     () => { const y = getRandomInt(-5, -1); return { problem: `The point (x, \\(${y}\\)) is in Quadrant III. Is x positive or negative?`, answer: `Negative`, checkAnswer: "Negative" }; },

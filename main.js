@@ -6,14 +6,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const generateProblemsBtn = document.getElementById('generateProblems');
     const startTestBtn = document.getElementById('startTest');
     const submitTestBtn = document.getElementById('submitTestBtn');
+    const generatePdfWorksheetBtn = document.getElementById('generatePdfWorksheet');
+    const generatePdfAnswersBtn = document.getElementById('generatePdfAnswers');
     const problemsContainer = document.getElementById('problemsContainer');
     const resultsContainer = document.getElementById('resultsContainer');
     const welcomeMessage = document.getElementById('welcome-message');
 
     let generatedProblemsData = [];
+    let isTestMode = false;
     const boardInstances = {};
 
-    const generateProblems = (isTestMode = false) => {
+    const generateProblems = (testMode = false) => {
+        isTestMode = testMode;
         const selectedTopicIds = Array.from(topicCheckboxes)
                                     .filter(cb => cb.checked)
                                     .map(cb => cb.value);
@@ -41,6 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
         submitTestBtn.style.display = isTestMode ? 'block' : 'none';
         problemsContainer.style.display = 'block';
         generatedProblemsData = [];
+        Object.values(boardInstances).forEach(JXG.JSXGraph.freeBoard);
+
 
         const selectedModules = allProblemModules.filter(module => selectedTopicIds.includes(module.topicId));
 
@@ -48,8 +54,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const randomModule = selectedModules[Math.floor(Math.random() * selectedModules.length)];
             if (!randomModule) continue;
 
-            const problemData = randomModule.generateProblem({});
-            generatedProblemsData.push({ ...problemData, problemText: problemData.problem, graphId: problemData.graphId, graphFunction: problemData.graphFunction });
+            let problemData = randomModule.generateProblem({});
+            
+            if (problemData.graphId) {
+                problemData.graphId = `graph-container-${i}`;
+            }
+
+            generatedProblemsData.push({ ...problemData, problemText: problemData.problem, topicName: randomModule.topicName });
 
             const problemDiv = document.createElement('div');
             problemDiv.className = 'problem-item';
@@ -77,6 +88,66 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         addEventListeners();
     };
+    
+    const generatePdf = (includeAnswers = false) => {
+        if (generatedProblemsData.length === 0) {
+            alert("Please generate problems first!");
+            return;
+        }
+    
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+    
+        doc.setFontSize(22);
+        doc.text("Titan Training", 105, 20, null, null, "center");
+        doc.setFontSize(16);
+        doc.text(isTestMode ? "Test" : "Worksheet", 105, 30, null, null, "center");
+    
+        let yPosition = 45;
+    
+        generatedProblemsData.forEach((problem, index) => {
+            const problemText = `Problem ${index + 1} (${problem.topicName}): ${problem.problemText.replace(/\\\(|\\\)/g, '$')}`;
+            const splitText = doc.splitTextToSize(problemText, 180);
+    
+            if (yPosition + (splitText.length * 10) > 280) {
+                doc.addPage();
+                yPosition = 20;
+            }
+    
+            doc.setFontSize(12);
+            doc.text(splitText, 15, yPosition);
+            yPosition += splitText.length * 7;
+    
+            if (isTestMode || !includeAnswers) {
+                yPosition += 20;
+            }
+        });
+    
+        if (includeAnswers && !isTestMode) {
+            doc.addPage();
+            doc.setFontSize(22);
+            doc.text("Answer Key", 105, 20, null, null, "center");
+            yPosition = 35;
+    
+            generatedProblemsData.forEach((problem, index) => {
+                const answerText = `Problem ${index + 1}: ${problem.answer.replace(/\\\(|\\\)/g, '$')}`;
+                const splitAnswer = doc.splitTextToSize(answerText, 180);
+    
+                if (yPosition + (splitAnswer.length * 10) > 280) {
+                    doc.addPage();
+                    yPosition = 20;
+                }
+    
+                doc.setFontSize(12);
+                doc.text(splitAnswer, 15, yPosition);
+                yPosition += splitAnswer.length * 7 + 5;
+            });
+        }
+    
+        const fileName = includeAnswers ? "Titan_Training_Worksheet_with_Answers.pdf" : "Titan_Training_Worksheet.pdf";
+        doc.save(fileName);
+    };
+
 
     function submitAndGradeTest() {
         let score = 0;
@@ -126,7 +197,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (event.target.classList.contains('graph-toggle')) {
                     const graphId = event.target.dataset.graphId;
-                    const problemData = generatedProblemsData.find(p => p.graphId === graphId);
+                    const problemIndex = parseInt(graphId.split('-').pop(), 10);
+                    const problemData = generatedProblemsData[problemIndex];
                     const graphBox = document.getElementById(graphId);
 
                     if (problemData && graphBox) {
@@ -149,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
             delete boardInstances[graphId];
         }
 
-        if (free) {
+        if (free || !graphFunctionData) {
             const graphBox = document.getElementById(graphId);
             if(graphBox) graphBox.innerHTML = '';
             return;
@@ -161,11 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showNavigation: true
         };
 
-        if (graphFunctionData.diagram) {
-            boardOptions.axis = false;
-        } else {
-            boardOptions.axis = true;
-        }
+        boardOptions.axis = !graphFunctionData.diagram;
 
         const board = JXG.JSXGraph.initBoard(graphId, boardOptions);
         boardInstances[graphId] = board;
@@ -194,4 +262,6 @@ document.addEventListener('DOMContentLoaded', () => {
     generateProblemsBtn.addEventListener('click', () => generateProblems(false));
     startTestBtn.addEventListener('click', () => generateProblems(true));
     submitTestBtn.addEventListener('click', submitAndGradeTest);
+    generatePdfWorksheetBtn.addEventListener('click', () => generatePdf(false));
+    generatePdfAnswersBtn.addEventListener('click', () => generatePdf(true));
 });
