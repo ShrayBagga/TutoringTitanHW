@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const welcomeMessage = document.getElementById('welcome-message');
 
     let generatedProblemsData = [];
+    const boardInstances = {};
 
     const generateProblems = (isTestMode = false) => {
         const selectedTopicIds = Array.from(topicCheckboxes)
@@ -132,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const graphBox = document.getElementById(graphId);
                         if (graphBox.style.display === 'block') {
                             graphBox.style.display = 'none';
-                            graphBox.innerHTML = '';
+                            renderGraph(graphId, null, true); // Free the board
                         } else {
                             graphBox.style.display = 'block';
                             renderGraph(graphId, problemData.graphFunction);
@@ -143,24 +144,48 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function renderGraph(graphId, graphFunctionData) {
-        JXG.JSXGraph.freeBoard(document.getElementById(graphId));
-        
+    function renderGraph(graphId, graphFunctionData, free = false) {
+        // If a board exists for this ID, free it first.
+        if (boardInstances[graphId]) {
+            JXG.JSXGraph.freeBoard(boardInstances[graphId]);
+            delete boardInstances[graphId];
+        }
+
+        // If 'free' is true, we just wanted to clear the board.
+        if (free) {
+            const graphBox = document.getElementById(graphId);
+            if(graphBox) graphBox.innerHTML = '';
+            return;
+        }
+
         const board = JXG.JSXGraph.initBoard(graphId, {
-            boundingbox: graphFunctionData.boundingbox || [-5, 5, 5, -5],
+            boundingbox: graphFunctionData.boundingbox || [-10, 10, 10, -10],
             axis: true,
-            showCopyright: false
+            showCopyright: false,
+            showNavigation: true
         });
+
+        // Store the new board instance
+        boardInstances[graphId] = board;
+
         (graphFunctionData.functions || []).forEach(func => {
-            if (func.type === 'expression') board.create('functiongraph', [func.expression], { strokeColor: 'blue', ...func.options });
-            else if (func.type === 'point') board.create('point', [func.x, func.y], { name: func.options.name || `(${func.x}, ${func.y})`, color: 'red', size: 3, ...func.options });
-            else if (func.type === 'polygon') board.create('polygon', func.vertices, { fillColor: 'lightblue', fillOpacity: 0.4, borders: { strokeColor: 'blue' }, ...func.options});
-            else if (func.type === 'line') board.create('line', [func.point1, func.point2], {strokeColor:'black', ...func.options});
-            else if (func.type === 'ellipse') board.create('ellipse', [func.center, func.radius], {strokeColor:'black', ...func.options});
-            else if (func.type === 'circle') board.create('circle', [func.center, func.radius], {strokeColor:'blue', ...func.options});
+            if (func.type === 'expression') {
+                board.create('functiongraph', [func.expression], { strokeColor: 'blue', ...func.options });
+            } else if (func.type === 'point') {
+                board.create('point', [func.x, func.y], { name: func.options.name || '', color: 'red', size: 3, ...func.options });
+            } else if (func.type === 'polygon') {
+                board.create('polygon', func.vertices, { fillColor: 'lightblue', fillOpacity: 0.4, borders: { strokeColor: 'blue' }, ...func.options });
+            } else if (func.type === 'line') {
+                board.create('line', [func.point1, func.point2], { strokeColor: 'black', ...func.options });
+            } else if (func.type === 'ellipse') {
+                board.create('ellipse', [func.center, func.radius], { strokeColor: 'black', ...func.options });
+            } else if (func.type === 'circle') {
+                board.create('circle', [func.center, func.radius], { strokeColor: 'blue', ...func.options });
+            }
         });
+
         (graphFunctionData.labels || []).forEach(label => {
-            board.create('text', [label.x, label.y, label.text], { color: 'black', ...label.options});
+            board.create('text', [label.x, label.y, label.text], { color: 'black', ...label.options });
         });
     }
     
