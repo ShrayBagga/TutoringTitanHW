@@ -54,6 +54,20 @@ import { module as module9M10 } from './9M10.js';
 import { module as module9M11 } from './9M11.js';
 import { module as module9M12 } from './9M12.js';
 
+// --- 10th Grade (Geometry) Modules ---
+import { module as module10M1 } from './10M1.js';
+import { module as module10M2 } from './10M2.js';
+import { module as module10M3 } from './10M3.js';
+import { module as module10M4 } from './10M4.js';
+import { module as module10M5 } from './10M5.js';
+import { module as module10M6 } from './10M6.js';
+import { module as module10M7 } from './10M7.js';
+import { module as module10M8 } from './10M8.js';
+import { module as module10M9 } from './10M9.js';
+import { module as module10M10 } from './10M10.js';
+import { module as module10M11 } from './10M11.js';
+import { module as module10M12 } from './10M12.js';
+
 
 // Add all imported modules to a single exportable array.
 export const allProblemModules = [
@@ -69,4 +83,7 @@ export const allProblemModules = [
     // Grade 9
     module9M1, module9M2, module9M3, module9M4, module9M5, module9M6,
     module9M7, module9M8, module9M9, module9M10, module9M11, module9M12,
+    // Grade 10 (uncomment as you create the files)
+    module10M1, module10M2, module10M3, module10M4, module10M5, module10M6,
+    module10M7, module10M8, module10M9, module10M10, module10M11, module10M12,
 ];

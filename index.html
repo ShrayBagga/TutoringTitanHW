@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Titan Training - Math Practice</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/jsxgraph@1.7.0/distrib/jsxgraph.css" />
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jsxgraph@1.7.0/distrib/jsxgraphcore.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
     <header>
@@ -24,97 +24,118 @@
 
     <main class="container">
         <aside class="sidebar">
-            <h2>Settings</h2>
-            
-            <div class="setting-section">
-                <h3>6th Grade Topics</h3>
-                <div id="grade6-checklist">
-                    <label><input type="checkbox" name="topic" value="6M1"> Arithmetic Operations</label>
-                    <label><input type="checkbox" name="topic" value="6M2"> Fraction & Decimal Operations</label>
-                    <label><input type="checkbox" name="topic" value="6M3"> The Number System</label>
-                    <label><input type="checkbox" name="topic" value="6M4"> Algebraic Expressions</label>
-                    <label><input type="checkbox" name="topic" value="6M5"> Equations & Inequalities</label>
-                    <label><input type="checkbox" name="topic" value="6M6"> Geometry: Area & Volume</label>
-                    <label><input type="checkbox" name="topic" value="6M7"> The Coordinate Plane</label>
-                    <label><input type="checkbox" name="topic" value="6M8"> Data & Statistics Introduction</label>
-                    <label><input type="checkbox" name="topic" value="6M9"> Measures of Central Tendency</label>
-                    <label><input type="checkbox" name="topic" value="6M10"> Ratios, Rates & Percentages</label>
-                    <label><input type="checkbox" name="topic" value="6M11"> Data Displays</label>
-                    <label><input type="checkbox" name="topic" value="6M12"> Basic Probability</label>
-                </div>
-            </div>
+            <div class="sidebar-content">
+                <h2>Settings</h2>
+                
+                <details class="setting-section" open>
+                    <summary>6th Grade Topics</summary>
+                    <div class="checklist" id="grade6-checklist">
+                        <label><input type="checkbox" name="topic" value="6M1"> Arithmetic Operations</label>
+                        <label><input type="checkbox" name="topic" value="6M2"> Fraction & Decimal Operations</label>
+                        <label><input type="checkbox" name="topic" value="6M3"> The Number System</label>
+                        <label><input type="checkbox" name="topic" value="6M4"> Algebraic Expressions</label>
+                        <label><input type="checkbox" name="topic" value="6M5"> Equations & Inequalities</label>
+                        <label><input type="checkbox" name="topic" value="6M6"> Geometry: Area & Volume</label>
+                        <label><input type="checkbox" name="topic" value="6M7"> The Coordinate Plane</label>
+                        <label><input type="checkbox" name="topic" value="6M8"> Data & Statistics Intro</label>
+                        <label><input type="checkbox" name="topic" value="6M9"> Measures of Central Tendency</label>
+                        <label><input type="checkbox" name="topic" value="6M10"> Ratios, Rates & Percentages</label>
+                        <label><input type="checkbox" name="topic" value="6M11"> Data Displays</label>
+                        <label><input type="checkbox" name="topic" value="6M12"> Basic Probability</label>
+                    </div>
+                </details>
 
-            <div class="setting-section">
-                <h3>7th Grade Topics</h3>
-                <div id="grade7-checklist">
-                    <label><input type="checkbox" name="topic" value="7M1"> Operations with Rational Numbers</label>
-                    <label><input type="checkbox" name="topic" value="7M2"> Expressions & Equations</label>
-                    <label><input type="checkbox" name="topic" value="7M3"> Ratios & Proportional Relationships</label>
-                    <label><input type="checkbox" name="topic" value="7M4"> Percent Applications</label>
-                    <label><input type="checkbox" name="topic" value="7M5"> Solving & Graphing Inequalities</label>
-                    <label><input type="checkbox" name="topic" value="7M6"> Scale Drawings & Figures</label>
-                    <label><input type="checkbox" name="topic" value="7M7"> Geometry: Angles & Circles</label>
-                    <label><input type="checkbox" name="topic" value="7M8"> Geometry: 3D Figures & Slicing</label>
-                    <label><input type="checkbox" name="topic" value="7M9"> Random Sampling & Inferences</label>
-                    <label><input type="checkbox" name="topic" value="7M10"> Comparing Data Sets</label>
-                    <label><input type="checkbox" name="topic" value="7M11"> Simple & Compound Probability</label>
-                    <label><input type="checkbox" name="topic" value="7M12"> Probability Simulations</label>
-                </div>
-            </div>
+                <details class="setting-section">
+                    <summary>7th Grade Topics</summary>
+                    <div class="checklist" id="grade7-checklist">
+                        <label><input type="checkbox" name="topic" value="7M1"> Operations with Rational Numbers</label>
+                        <label><input type="checkbox" name="topic" value="7M2"> Expressions & Equations</label>
+                        <label><input type="checkbox" name="topic" value="7M3"> Ratios & Proportional Relationships</label>
+                        <label><input type="checkbox" name="topic" value="7M4"> Percent Applications</label>
+                        <label><input type="checkbox" name="topic" value="7M5"> Solving & Graphing Inequalities</label>
+                        <label><input type="checkbox" name="topic" value="7M6"> Scale Drawings & Figures</label>
+                        <label><input type="checkbox" name="topic" value="7M7"> Geometry: Angles & Circles</label>
+                        <label><input type="checkbox" name="topic" value="7M8"> Geometry: 3D Figures & Slicing</label>
+                        <label><input type="checkbox" name="topic" value="7M9"> Random Sampling & Inferences</label>
+                        <label><input type="checkbox" name="topic" value="7M10"> Comparing Data Sets</label>
+                        <label><input type="checkbox" name="topic" value="7M11"> Simple & Compound Probability</label>
+                        <label><input type="checkbox" name="topic" value="7M12"> Probability Simulations</label>
+                    </div>
+                </details>
 
-            <div class="setting-section">
-                <h3>8th Grade Topics</h3>
-                <div id="grade8-checklist">
-                    <label><input type="checkbox" name="topic" value="8M1"> The Real Number System</label>
-                    <label><input type="checkbox" name="topic" value="8M2"> Exponents & Scientific Notation</label>
-                    <label><input type="checkbox" name="topic" value="8M3"> Proportionality & Linear Equations</label>
-                    <label><input type="checkbox" name="topic" value="8M4"> Solving Linear Equations</label>
-                    <label><input type="checkbox" name="topic" value="8M5"> Systems of Linear Equations</label>
-                    <label><input type="checkbox" name="topic" value="8M6"> Functions</label>
-                    <label><input type="checkbox" name="topic" value="8M7"> The Pythagorean Theorem</label>
-                    <label><input type="checkbox" name="topic" value="8M8"> Transformations</label>
-                    <label><input type="checkbox" name="topic" value="8M9"> Congruence & Similarity</label>
-                    <label><input type="checkbox" name="topic" value="8M10"> Volume: Cones, Cylinders, Spheres</label>
-                    <label><input type="checkbox" name="topic" value="8M11"> Bivariate Data & Scatter Plots</label>
-                    <label><input type="checkbox" name="topic" value="8M12"> Data Analysis & Two-Way Tables</label>
-                </div>
-            </div>
+                <details class="setting-section">
+                    <summary>8th Grade Topics</summary>
+                    <div class="checklist" id="grade8-checklist">
+                         <label><input type="checkbox" name="topic" value="8M1"> The Real Number System</label>
+                        <label><input type="checkbox" name="topic" value="8M2"> Exponents & Scientific Notation</label>
+                        <label><input type="checkbox" name="topic" value="8M3"> Proportionality & Linear Equations</label>
+                        <label><input type="checkbox" name="topic" value="8M4"> Solving Linear Equations</label>
+                        <label><input type="checkbox" name="topic" value="8M5"> Systems of Linear Equations</label>
+                        <label><input type="checkbox" name="topic" value="8M6"> Functions</label>
+                        <label><input type="checkbox" name="topic" value="8M7"> The Pythagorean Theorem</label>
+                        <label><input type="checkbox" name="topic" value="8M8"> Transformations</label>
+                        <label><input type="checkbox" name="topic" value="8M9"> Congruence & Similarity</label>
+                        <label><input type="checkbox" name="topic" value="8M10"> Volume: Cones, Cylinders, Spheres</label>
+                        <label><input type="checkbox" name="topic" value="8M11"> Bivariate Data & Scatter Plots</label>
+                        <label><input type="checkbox" name="topic" value="8M12"> Data Analysis & Two-Way Tables</label>
+                    </div>
+                </details>
 
-             <div class="setting-section">
-                <h3>9th Grade (Algebra 1)</h3>
-                <div id="grade9-checklist">
-                    <label><input type="checkbox" name="topic" value="9M1"> Foundations of Algebra</label>
-                    <label><input type="checkbox" name="topic" value="9M2"> Solving Linear Equations & Inequalities</label>
-                    <label><input type="checkbox" name="topic" value="9M3"> Graphing Linear Functions</label>
-                    <label><input type="checkbox" name="topic" value="9M4"> Writing Linear Functions</label>
-                    <label><input type="checkbox" name="topic" value="9M5"> Systems of Equations & Inequalities</label>
-                    <label><input type="checkbox" name="topic" value="9M6"> Exponents & Exponential Functions</label>
-                    <label><input type="checkbox" name="topic" value="9M7"> Polynomials & Factoring</label>
-                    <label><input type="checkbox" name="topic" value="9M8"> Solving Quadratic Equations</label>
-                    <label><input type="checkbox" name="topic" value="9M9"> Graphing Quadratic Functions</label>
-                    <label><input type="checkbox" name="topic" value="9M10"> Radicals & Radical Functions</label>
-                    <label><input type="checkbox" name="topic" value="9M11"> Rational Expressions & Functions</label>
-                    <label><input type="checkbox" name="topic" value="9M12"> Data Analysis & Statistics</label>
-                </div>
-            </div>
+                 <details class="setting-section">
+                    <summary>9th Grade (Algebra 1)</summary>
+                    <div class="checklist" id="grade9-checklist">
+                        <label><input type="checkbox" name="topic" value="9M1"> Foundations of Algebra</label>
+                        <label><input type="checkbox" name="topic" value="9M2"> Solving Linear Equations & Inequalities</label>
+                        <label><input type="checkbox" name="topic" value="9M3"> Graphing Linear Functions</label>
+                        <label><input type="checkbox" name="topic" value="9M4"> Writing Linear Functions</label>
+                        <label><input type="checkbox" name="topic" value="9M5"> Systems of Equations & Inequalities</label>
+                        <label><input type="checkbox" name="topic" value="9M6"> Exponents & Exponential Functions</label>
+                        <label><input type="checkbox" name="topic" value="9M7"> Polynomials & Factoring</label>
+                        <label><input type="checkbox" name="topic" value="9M8"> Solving Quadratic Equations</label>
+                        <label><input type="checkbox" name="topic" value="9M9"> Graphing Quadratic Functions</label>
+                        <label><input type="checkbox" name="topic" value="9M10"> Radicals & Radical Functions</label>
+                        <label><input type="checkbox" name="topic" value="9M11"> Rational Expressions & Functions</label>
+                        <label><input type="checkbox" name="topic" value="9M12"> Data Analysis & Statistics</label>
+                    </div>
+                </details>
 
-            <div class="setting-section">
-                <h3>Problem Count</h3>
-                <input type="number" id="problemCount" value="10" min="1" max="50">
-            </div>
-            
-            <div class="button-group">
-                <button id="generateProblems">Practice</button>
-                <button id="startTest">Take Test</button>
+                <details class="setting-section">
+                    <summary>10th Grade (Geometry)</summary>
+                    <div class="checklist" id="grade10-checklist">
+                        <label><input type="checkbox" name="topic" value="10M1"> Foundations of Geometry</label>
+                        <label><input type="checkbox" name="topic" value="10M2"> Logic & Reasoning</label>
+                        <label><input type="checkbox" name="topic" value="10M3"> Parallel & Perpendicular Lines</label>
+                        <label><input type="checkbox" name="topic" value="10M4"> Triangles & Congruence</label>
+                        <label><input type="checkbox" name="topic" value="10M5"> Relationships in Triangles</label>
+                        <label><input type="checkbox" name="topic" value="10M6"> Quadrilaterals</label>
+                        <label><input type="checkbox" name="topic" value="10M7"> Similarity</label>
+                        <label><input type="checkbox" name="topic" value="10M8"> Right Triangles & Trigonometry</label>
+                        <label><input type="checkbox" name="topic" value="10M9"> Circles</label>
+                        <label><input type="checkbox" name="topic" value="10M10"> Area of Polygons & Circles</label>
+                        <label><input type="checkbox" name="topic" value="10M11"> Surface Area & Volume</label>
+                        <label><input type="checkbox" name="topic" value="10M12"> Transformations & Symmetry</label>
+                    </div>
+                </details>
+                
+                <div class="setting-section final-settings">
+                    <h3>Problem Count</h3>
+                    <input type="number" id="problemCount" value="10" min="1" max="50">
+                </div>
+                
+                <div class="button-group">
+                    <button id="generateProblems">Practice</button>
+                    <button id="startTest">Take Test</button>
+                </div>
             </div>
         </aside>
 
         <section class="problem-area">
-            <h2>Problems</h2>
-            <div id="resultsContainer" class="results-container" style="display: none;"></div>
-            <div id="problemsContainer">
-                <p>Select one or more topics and click "Practice" or "Take Test" to start.</p>
+            <div id="welcome-message">
+                <h2>Welcome to Titan Training</h2>
+                <p>Select your topics, choose a problem count, and start learning!</p>
             </div>
+            <div id="resultsContainer" class="results-container" style="display: none;"></div>
+            <div id="problemsContainer" style="display: none;"></div>
             <button id="submitTestBtn" style="display: none;">Submit Test</button>
         </section>
     </main>
@@ -122,3 +143,4 @@
     <script type="module" src="main.js"></script>
 </body>
 </html>
+

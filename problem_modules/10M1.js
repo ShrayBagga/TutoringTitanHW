@@ -1,0 +1,29 @@
+// --- Helper Functions ---
+function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+const problemGenerators = [
+    () => { const x1=getRandomInt(-5,0), y1=getRandomInt(-5,0), x2=getRandomInt(1,5), y2=getRandomInt(1,5); const d = Math.sqrt((x2-x1)**2 + (y2-y1)**2); return { problem: `Find the distance between points A(\\(${x1}, ${y1}\\)) and B(\\(${x2}, ${y2}\\)). Round to one decimal place.`, answer: `\\(${d.toFixed(1)}\\)`, checkAnswer: d.toFixed(1) }; },
+    () => { const x1=getRandomInt(-6,-2), y1=getRandomInt(-6,-2), x2=getRandomInt(2,6), y2=getRandomInt(2,6); const midX = (x1+x2)/2, midY = (y1+y2)/2; return { problem: `Find the midpoint of the segment with endpoints A(\\(${x1}, ${y1}\\)) and B(\\(${x2}, ${y2}\\)).`, answer: `(\\( ${midX}, ${midY} \\))`, checkAnswer: `${midX},${midY}` }; },
+    () => { const angle = getRandomInt(30, 80); return { problem: `An angle measures \\(${angle}^{\\circ}\\). Find the measure of its complement.`, answer: `\\(${90-angle}^{\\circ}\\)`, checkAnswer: (90-angle).toString() }; },
+    () => { const angle = getRandomInt(100, 150); return { problem: `An angle measures \\(${angle}^{\\circ}\\). Find the measure of its supplement.`, answer: `\\(${180-angle}^{\\circ}\\)`, checkAnswer: (180-angle).toString() }; },
+    () => { const angle = getRandomInt(40, 140); return { problem: `Two vertical angles are formed by intersecting lines. One angle measures \\(${angle}^{\\circ}\\). What is the measure of the other?`, answer: `\\(${angle}^{\\circ}\\)`, checkAnswer: angle.toString() }; },
+    () => { const angle = getRandomInt(50, 130); return { problem: `Two angles form a linear pair. One angle is \\(${angle}^{\\circ}\\). What is the measure of the other?`, answer: `\\(${180-angle}^{\\circ}\\)`, checkAnswer: (180-angle).toString() }; },
+    () => { const s = getRandomInt(5, 12); const perimeter = 4 * s; return { problem: `A square has a side length of \\(${s}\\). What is its perimeter?`, answer: `\\(${perimeter}\\)`, checkAnswer: perimeter.toString() }; },
+    () => { const s = getRandomInt(5, 12); const area = s * s; return { problem: `A square has a side length of \\(${s}\\). What is its area?`, answer: `\\(${area}\\)`, checkAnswer: area.toString() }; },
+    () => { const r = getRandomInt(3, 10); const circ = 2 * Math.PI * r; return { problem: `A circle has a radius of \\(${r}\\). Find its circumference. (Use \\(\\pi \\approx 3.14\\))`, answer: `\\(${circ.toFixed(2)}\\)`, checkAnswer: circ.toFixed(2) }; },
+    () => { const r = getRandomInt(3, 10); const area = Math.PI * r * r; return { problem: `A circle has a radius of \\(${r}\\). Find its area. (Use \\(\\pi \\approx 3.14\\))`, answer: `\\(${area.toFixed(2)}\\)`, checkAnswer: area.toFixed(2) }; },
+    () => { const n = getRandomInt(5, 8); const sum = (n-2)*180; return { problem: `What is the sum of the interior angles of a convex polygon with \\(${n}\\) sides?`, answer: `\\(${sum}^{\\circ}\\)`, checkAnswer: sum.toString() }; },
+    () => { const n = getRandomInt(5, 8); const angle = (n-2)*180/n; return { problem: `What is the measure of one interior angle of a regular \\(${n}\\)-sided polygon?`, answer: `\\(${angle.toFixed(1)}^{\\circ}\\)`, checkAnswer: angle.toFixed(1) }; },
+    () => { const b = getRandomInt(6, 12); const h = getRandomInt(4, 8); const area = 0.5 * b * h; return { problem: `Find the area of a triangle with base \\(${b}\\) and height \\(${h}\\).`, answer: `\\(${area}\\)`, checkAnswer: area.toString() }; },
+    () => { const part1 = getRandomInt(5, 10); const part2 = getRandomInt(8, 15); const whole = part1 + part2; return { problem: `Point B is between A and C on a line segment. If AB = ${part1} and BC = ${part2}, what is the length of AC?`, answer: `\\(${whole}\\)`, checkAnswer: whole.toString() }; },
+    () => { const whole = getRandomInt(20, 30); const part1 = getRandomInt(8, 15); const part2 = whole - part1; return { problem: `Point B is between A and C on a line segment. If AC = ${whole} and AB = ${part1}, what is the length of BC?`, answer: `\\(${part2}\\)`, checkAnswer: part2.toString() }; },
+    () => { const whole = getRandomInt(60, 120); const part1 = getRandomInt(20, 50); const part2 = whole - part1; return { problem: `\\(\\angle ABC\\) is a straight angle. Ray BD divides it. If \\(m\\angle ABD = ${part1}^{\\circ}\\), what is \\(m\\angle CBD\\)?`, answer: `\\(${part2}^{\\circ}\\)`, checkAnswer: part2.toString() }; },
+    () => { const x = getRandomInt(10, 30); const a1 = 2*x+10; const a2 = 3*x-20; return { problem: `Two vertical angles measure \\((2x+10)^{\\circ}\\) and \\((3x-20)^{\\circ}\\). Find the value of x.`, answer: `\\(x=30\\)`, checkAnswer: "30" }; },
+    () => { const x = getRandomInt(20, 40); const a1 = x+15; const a2 = 2*x-15; return { problem: `Two complementary angles measure \\((x+15)^{\\circ}\\) and \\((2x-15)^{\\circ}\\). Find the measure of the larger angle.`, answer: `\\(60^{\\circ}\\)`, checkAnswer: "60" }; },
+    () => { const graphId = `g-${Date.now()}`; return { problem: `What is the name of a line that intersects a circle at exactly one point?`, answer: `A tangent`, checkAnswer: "tangent", graphId, graphFunction:{functions:[], boundingbox:[-5,5,5,-5]} }; },
+    () => { const graphId = `g-${Date.now()}`; return { problem: `A line segment whose endpoints are on a circle is called a _____.`, answer: `A chord`, checkAnswer: "chord", graphId, graphFunction:{functions:[], boundingbox:[-5,5,5,-5]} }; },
+];
+function generate(settings) {
+    const generator = problemGenerators[getRandomInt(0, problemGenerators.length - 1)];
+    return { ...generator(), hint: generator().hint || "Review basic geometric definitions and formulas." };
+}
+export const module = { topicId: '10M1', topicName: 'Foundations of Geometry', generateProblem: generate };
