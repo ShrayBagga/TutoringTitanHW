@@ -1,6 +1,12 @@
 import { allProblemModules } from './problem_modules/index.js';
+import { firebaseConfig } from './firebase-config.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Initialize Firebase ---
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // --- UI Elements ---
     const topicCheckboxes = document.querySelectorAll('input[name="topic"]');
     const problemCountInput = document.getElementById('problemCount');
     const generateProblemsBtn = document.getElementById('generateProblems');
@@ -12,10 +18,96 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultsContainer = document.getElementById('resultsContainer');
     const welcomeMessage = document.getElementById('welcome-message');
 
+    // --- Auth UI Elements ---
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const userStatusDiv = document.getElementById('user-status');
+    const userEmailSpan = document.getElementById('user-email');
+    const authModal = document.getElementById('authModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const authForm = document.getElementById('authForm');
+    const authTitle = document.getElementById('authTitle');
+    const authEmailInput = document.getElementById('authEmail');
+    const authPasswordInput = document.getElementById('authPassword');
+    const authSubmitBtn = document.getElementById('authSubmitBtn');
+    const authToggleLink = document.getElementById('authToggleLink');
+    const authToggleText = document.getElementById('authToggleText');
+    const authError = document.getElementById('authError');
+
+    let isSignUpMode = false;
     let generatedProblemsData = [];
     let isTestMode = false;
     const boardInstances = {};
 
+    // --- Auth State Management ---
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            // User is signed in
+            userEmailSpan.textContent = user.email;
+            userStatusDiv.style.display = 'flex';
+            loginBtn.style.display = 'none';
+        } else {
+            // User is signed out
+            userStatusDiv.style.display = 'none';
+            loginBtn.style.display = 'block';
+        }
+    });
+    
+    // --- Auth Event Listeners ---
+    loginBtn.addEventListener('click', () => {
+        authModal.style.display = 'flex';
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+        authModal.style.display = 'none';
+    });
+
+    logoutBtn.addEventListener('click', () => {
+        auth.signOut();
+    });
+    
+    authToggleLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        isSignUpMode = !isSignUpMode;
+        authTitle.textContent = isSignUpMode ? 'Sign Up' : 'Login';
+        authSubmitBtn.textContent = isSignUpMode ? 'Sign Up' : 'Login';
+        authToggleText.innerHTML = isSignUpMode ? 'Already have an account? <a href="#" id="authToggleLink">Login</a>' : 'Don\'t have an account? <a href="#" id="authToggleLink">Sign Up</a>';
+        // Re-add event listener to the new link
+        document.getElementById('authToggleLink').addEventListener('click', arguments.callee);
+        authError.textContent = '';
+    });
+
+    authForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = authEmailInput.value;
+        const password = authPasswordInput.value;
+        authError.textContent = '';
+
+        if (isSignUpMode) {
+            // Sign up user
+            auth.createUserWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    authModal.style.display = 'none';
+                    authForm.reset();
+                })
+                .catch(error => {
+                    authError.textContent = error.message;
+                });
+        } else {
+            // Login user
+            auth.signInWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    authModal.style.display = 'none';
+                    authForm.reset();
+                })
+                .catch(error => {
+                    authError.textContent = error.message;
+                });
+        }
+    });
+
+
+    // --- Problem Generation Logic ---
     const generateProblems = (testMode = false) => {
         isTestMode = testMode;
         const selectedTopicIds = Array.from(topicCheckboxes)

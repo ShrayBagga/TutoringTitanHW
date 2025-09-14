@@ -13,13 +13,41 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/jsxgraph@1.7.0/distrib/jsxgraph.css" />
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jsxgraph@1.7.0/distrib/jsxgraphcore.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- Firebase Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 </head>
 <body>
+    <!-- Authentication Modal -->
+    <div id="authModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <button id="closeModalBtn" class="modal-close">&times;</button>
+            <h2 id="authTitle">Login</h2>
+            <form id="authForm">
+                <input type="email" id="authEmail" placeholder="Email" required>
+                <input type="password" id="authPassword" placeholder="Password" required>
+                <p id="authError" class="auth-error"></p>
+                <button type="submit" id="authSubmitBtn">Login</button>
+            </form>
+            <p id="authToggleText">Don't have an account? <a href="#" id="authToggleLink">Sign Up</a></p>
+        </div>
+    </div>
+
     <header>
         <div class="header-content">
-            <img src="Logo.png" alt="Titan Training Logo" class="logo">
-            <h1>Titan Training</h1>
-            <img src="Titan_Tutoring.png" alt="Titan Training Flier" class="flier">
+            <div class="header-left">
+                <img src="Logo.png" alt="Titan Training Logo" class="logo">
+                <h1>Titan Training</h1>
+            </div>
+            <div class="header-right">
+                <div id="user-status" style="display: none;">
+                    <span id="user-email"></span>
+                    <button id="logoutBtn">Logout</button>
+                </div>
+                <button id="loginBtn" style="display: block;">Login / Sign Up</button>
+                <img src="Titan_Tutoring.png" alt="Titan Training Flier" class="flier">
+            </div>
         </div>
     </header>
 
@@ -177,8 +205,7 @@
 
         <section class="problem-area">
             <div id="welcome-message">
-                <h2>Welcome to Titan Training</h2>
-                <p>Select your topics, choose a problem count, and start learning!</p>
+                <img src="Titan_Tutoring.png" alt="Welcome to Titan Tutoring" class="welcome-flier">
             </div>
             <div id="resultsContainer" class="results-container" style="display: none;"></div>
             <div id="problemsContainer" style="display: none;"></div>
@@ -189,3 +216,4 @@
     <script type="module" src="main.js"></script>
 </body>
 </html>
+
