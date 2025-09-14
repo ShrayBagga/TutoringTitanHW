@@ -5,20 +5,17 @@ function formatAnswer(val, p=2) { return parseFloat(val.toFixed(p)).toString().r
 // --- Graphing Helper for Transversal Problems ---
 function createTransversalGraph() {
     const graphId = `g-${Date.now()}`;
-    const m = (getRandomInt(-1, 1) * getRandomInt(1, 4))/10 + 0.1; // shallow slope, non-zero
-    const b1 = getRandomInt(2, 4);
-    const b2 = getRandomInt(-4, -2);
-    const m_trans = -1/m + (getRandomInt(0,1) ? 0.5 : -0.5); // A transversal slope
-    const x_int = getRandomInt(-2,2);
-    const y_int = m_trans * x_int + getRandomInt(-1,1);
-
+    
     const graphFunction = {
+        diagram: true, // This will be a diagram, not a graph
+        boundingbox: [-1, 11, 7, -1],
         functions: [
-            { type: 'expression', expression: `function(x){ return ${m}*x+${b1};}` },
-            { type: 'expression', expression: `function(x){ return ${m}*x+${b2};}` },
-            { type: 'expression', expression: `function(x){ return ${m_trans}*(x-${x_int})+${y_int};}`, options: {strokeColor: '#32CD32'} } // Green transversal
-        ],
-        boundingbox: [-8, 8, 8, -8]
+            // Two parallel lines
+            { type: 'line', point1: [0, 5], point2: [10, 5], options: { strokeColor: 'blue' } },
+            { type: 'line', point1: [0, 1], point2: [10, 1], options: { strokeColor: 'blue' } },
+            // Transversal line
+            { type: 'line', point1: [1, 7], point2: [9, -1], options: { strokeColor: 'green' } }
+        ]
     };
     return { graphId, graphFunction };
 }
@@ -50,4 +47,3 @@ function generate(settings) {
     return { ...generator(), hint: generator().hint || "Parallel lines have equal slopes. Perpendicular lines have negative reciprocal slopes." };
 }
 export const module = { topicId: '10M3', topicName: 'Parallel & Perpendicular Lines', generateProblem: generate };
-

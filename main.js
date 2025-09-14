@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 problemHTML += `<div class="solution-section">
                                     <button class="solution-toggle" data-target="hint-${i}">Show Hint</button>
                                     <button class="solution-toggle" data-target="solution-${i}">Show Solution</button>
-                                    ${problemData.graphId ? `<button class="solution-toggle graph-toggle" data-graph-id="${problemData.graphId}">Show Graph</button>` : ''}
+                                    ${problemData.graphId ? `<button class="solution-toggle graph-toggle" data-graph-id="${problemData.graphId}">Show Diagram</button>` : ''}
                                 </div>
                                 <div id="hint-${i}" class="hint-content" style="display: none;"><strong>Hint:</strong> ${problemData.hint}</div>
                                 <div id="solution-${i}" class="solution-content" style="display: none;"><strong>Solution:</strong> ${problemData.answer}</div>`;
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (problemData && graphBox) {
                         if (graphBox.style.display === 'block') {
                             graphBox.style.display = 'none';
-                            renderGraph(graphId, null, true); // Free the board when hiding
+                            renderGraph(graphId, null, true);
                         } else {
                             graphBox.style.display = 'block';
                             renderGraph(graphId, problemData.graphFunction);
@@ -155,13 +155,19 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const board = JXG.JSXGraph.initBoard(graphId, {
+        const boardOptions = {
             boundingbox: graphFunctionData.boundingbox || [-10, 10, 10, -10],
-            axis: true,
             showCopyright: false,
             showNavigation: true
-        });
+        };
 
+        if (graphFunctionData.diagram) {
+            boardOptions.axis = false;
+        } else {
+            boardOptions.axis = true;
+        }
+
+        const board = JXG.JSXGraph.initBoard(graphId, boardOptions);
         boardInstances[graphId] = board;
 
         (graphFunctionData.functions || []).forEach(func => {

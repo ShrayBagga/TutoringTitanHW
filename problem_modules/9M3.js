@@ -23,7 +23,7 @@ const problemGenerators = [
     () => { const a=getRandomInt(2,5); return { problem: `How does the graph of \\(y=x+${a}\\) compare to the graph of \\(y=x\\)?`, answer: `It is shifted up by \\(${a}\\) units.`, checkAnswer: `shifted up ${a}` }; },
 ];
 function generate(settings) {
-    const problem = problemGenerators[getRandomInt(0, problemGenerators.length - 1)]();
-    return { ...problem, hint: problem.hint || "y=mx+b, where m is the slope and b is the y-intercept." };
+    const generator = problemGenerators[getRandomInt(0, problemGenerators.length - 1)];
+    return { ...generator(), hint: generator().hint || "y=mx+b, where m is the slope and b is the y-intercept." };
 }
 export const module = { topicId: '9M3', topicName: 'Graphing Linear Functions', generateProblem: generate };

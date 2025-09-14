@@ -6,11 +6,12 @@ function formatAnswer(val, p=1) { return parseFloat(val.toFixed(p)).toString().r
 function createCircleGraph(radius, elements = {}) {
     const graphId = `g-${Date.now()}`;
     const graphFunction = {
+        diagram: true,
+        boundingbox: [-radius-2, radius+2, radius+2, -radius-2],
         functions: [
             { type: 'point', x: 0, y: 0, options: { name: 'O', size: 1, color: 'black' } },
-            { type: 'expression', expression: `x^2+y^2=${radius**2}`, options: { strokeColor: 'blue' } }
+            { type: 'circle', center: [0,0], radius: radius, options: { strokeColor: 'blue' } }
         ],
-        boundingbox: [-radius-2, radius+2, radius+2, -radius-2],
         labels: []
     };
 
@@ -73,4 +74,3 @@ function generate(settings) {
     return { ...generator(), hint: generator().hint || "An inscribed angle is half its intercepted arc. A central angle is equal to its intercepted arc." };
 }
 export const module = { topicId: '10M9', topicName: 'Circles', generateProblem: generate };
-
