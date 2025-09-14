@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const problemCount = parseInt(problemCountInput.value, 10);
 
-        // Problem count validation (no upper limit)
         if (isNaN(problemCount) || problemCount <= 0) {
             problemsContainer.innerHTML = '<p style="color: red;">Please enter a valid problem count of 1 or more.</p>';
             welcomeMessage.style.display = 'none';
@@ -35,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // --- Reset UI ---
         welcomeMessage.style.display = 'none';
         problemsContainer.innerHTML = '';
         resultsContainer.innerHTML = '';
@@ -57,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
             problemDiv.className = 'problem-item';
             
             let problemHTML = `<div class="problem-text"><strong>Problem ${i + 1} (${randomModule.topicName}):</strong> ${problemData.problem}</div>
-                             ${problemData.graphId ? `<div id="${problemData.graphId}" class="jxgbox" style="display:none;"></div>` : ''}`;
+                             ${problemData.graphId ? `<div id="${problemData.graphId}" class="jxgbox" style="width: 500px; height: 400px; display:none;"></div>` : ''}`;
 
             if (isTestMode) {
                 problemHTML += `<div class="answer-input"><label for="answer-${i}">Your Answer:</label><input type="text" id="answer-${i}"></div>`;
@@ -129,11 +127,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (event.target.classList.contains('graph-toggle')) {
                     const graphId = event.target.dataset.graphId;
                     const problemData = generatedProblemsData.find(p => p.graphId === graphId);
-                    if (problemData && problemData.graphFunction) {
-                        const graphBox = document.getElementById(graphId);
+                    const graphBox = document.getElementById(graphId);
+
+                    if (problemData && graphBox) {
                         if (graphBox.style.display === 'block') {
                             graphBox.style.display = 'none';
-                            renderGraph(graphId, null, true); // Free the board
+                            renderGraph(graphId, null, true); // Free the board when hiding
                         } else {
                             graphBox.style.display = 'block';
                             renderGraph(graphId, problemData.graphFunction);
@@ -145,13 +144,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderGraph(graphId, graphFunctionData, free = false) {
-        // If a board exists for this ID, free it first.
         if (boardInstances[graphId]) {
             JXG.JSXGraph.freeBoard(boardInstances[graphId]);
             delete boardInstances[graphId];
         }
 
-        // If 'free' is true, we just wanted to clear the board.
         if (free) {
             const graphBox = document.getElementById(graphId);
             if(graphBox) graphBox.innerHTML = '';
@@ -165,7 +162,6 @@ document.addEventListener('DOMContentLoaded', () => {
             showNavigation: true
         });
 
-        // Store the new board instance
         boardInstances[graphId] = board;
 
         (graphFunctionData.functions || []).forEach(func => {
