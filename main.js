@@ -42,29 +42,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Auth State Management ---
     auth.onAuthStateChanged(user => {
         if (user) {
-            // User is signed in
             userEmailSpan.textContent = user.email;
             userStatusDiv.style.display = 'flex';
             loginBtn.style.display = 'none';
         } else {
-            // User is signed out
             userStatusDiv.style.display = 'none';
             loginBtn.style.display = 'block';
         }
     });
     
     // --- Auth Event Listeners ---
-    loginBtn.addEventListener('click', () => {
-        authModal.style.display = 'flex';
-    });
-
-    closeModalBtn.addEventListener('click', () => {
-        authModal.style.display = 'none';
-    });
-
-    logoutBtn.addEventListener('click', () => {
-        auth.signOut();
-    });
+    loginBtn.addEventListener('click', () => { authModal.style.display = 'flex'; });
+    closeModalBtn.addEventListener('click', () => { authModal.style.display = 'none'; });
+    logoutBtn.addEventListener('click', () => { auth.signOut(); });
     
     authToggleLink.addEventListener('click', (e) => {
         e.preventDefault();
@@ -72,7 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
         authTitle.textContent = isSignUpMode ? 'Sign Up' : 'Login';
         authSubmitBtn.textContent = isSignUpMode ? 'Sign Up' : 'Login';
         authToggleText.innerHTML = isSignUpMode ? 'Already have an account? <a href="#" id="authToggleLink">Login</a>' : 'Don\'t have an account? <a href="#" id="authToggleLink">Sign Up</a>';
-        // Re-add event listener to the new link
         document.getElementById('authToggleLink').addEventListener('click', arguments.callee);
         authError.textContent = '';
     });
@@ -84,28 +73,21 @@ document.addEventListener('DOMContentLoaded', () => {
         authError.textContent = '';
 
         if (isSignUpMode) {
-            // Sign up user
             auth.createUserWithEmailAndPassword(email, password)
-                .then(userCredential => {
+                .then(() => {
                     authModal.style.display = 'none';
                     authForm.reset();
                 })
-                .catch(error => {
-                    authError.textContent = error.message;
-                });
+                .catch(error => { authError.textContent = error.message; });
         } else {
-            // Login user
             auth.signInWithEmailAndPassword(email, password)
-                .then(userCredential => {
+                .then(() => {
                     authModal.style.display = 'none';
                     authForm.reset();
                 })
-                .catch(error => {
-                    authError.textContent = error.message;
-                });
+                .catch(error => { authError.textContent = error.message; });
         }
     });
-
 
     // --- Problem Generation Logic ---
     const generateProblems = (testMode = false) => {
@@ -113,18 +95,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedTopicIds = Array.from(topicCheckboxes)
                                     .filter(cb => cb.checked)
                                     .map(cb => cb.value);
-
         const problemCount = parseInt(problemCountInput.value, 10);
 
-        if (isNaN(problemCount) || problemCount <= 0) {
-            problemsContainer.innerHTML = '<p style="color: red;">Please enter a valid problem count of 1 or more.</p>';
-            welcomeMessage.style.display = 'none';
-            problemsContainer.style.display = 'block';
-            return;
-        }
-
-        if (selectedTopicIds.length === 0) {
-            problemsContainer.innerHTML = '<p style="color: red;">Please select at least one topic.</p>';
+        if (isNaN(problemCount) || problemCount <= 0 || selectedTopicIds.length === 0) {
+            problemsContainer.innerHTML = '<p style="color: red;">Please select at least one topic and enter a valid problem count.</p>';
             welcomeMessage.style.display = 'none';
             problemsContainer.style.display = 'block';
             return;
@@ -132,31 +106,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
         welcomeMessage.style.display = 'none';
         problemsContainer.innerHTML = '';
-        resultsContainer.innerHTML = '';
         resultsContainer.style.display = 'none';
         submitTestBtn.style.display = isTestMode ? 'block' : 'none';
         problemsContainer.style.display = 'block';
         generatedProblemsData = [];
         Object.values(boardInstances).forEach(JXG.JSXGraph.freeBoard);
 
-
         const selectedModules = allProblemModules.filter(module => selectedTopicIds.includes(module.topicId));
 
         for (let i = 0; i < problemCount; i++) {
             const randomModule = selectedModules[Math.floor(Math.random() * selectedModules.length)];
             if (!randomModule) continue;
-
             let problemData = randomModule.generateProblem({});
             
             if (problemData.graphId) {
                 problemData.graphId = `graph-container-${i}`;
             }
-
             generatedProblemsData.push({ ...problemData, problemText: problemData.problem, topicName: randomModule.topicName });
 
             const problemDiv = document.createElement('div');
             problemDiv.className = 'problem-item';
-            
             let problemHTML = `<div class="problem-text"><strong>Problem ${i + 1} (${randomModule.topicName}):</strong> ${problemData.problem}</div>
                              ${problemData.graphId ? `<div id="${problemData.graphId}" class="jxgbox" style="width: 500px; height: 400px; display:none;"></div>` : ''}`;
 
@@ -181,81 +150,93 @@ document.addEventListener('DOMContentLoaded', () => {
         addEventListeners();
     };
     
-    const generatePdf = (includeAnswers = false) => {
+    // --- PDF Generation ---
+    const generatePdf = async (includeAnswers = false) => {
         if (generatedProblemsData.length === 0) {
             alert("Please generate problems first!");
             return;
         }
-    
+
         const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-    
-        doc.setFontSize(22);
-        doc.text("Titan Training", 105, 20, null, null, "center");
-        doc.setFontSize(16);
-        doc.text(isTestMode ? "Test" : "Worksheet", 105, 30, null, null, "center");
-    
-        let yPosition = 45;
-    
+        const doc = new jsPDF('p', 'mm', 'a4');
+        const pdfContainer = document.createElement('div');
+        pdfContainer.style.position = 'absolute';
+        pdfContainer.style.left = '-9999px';
+        pdfContainer.style.width = '1000px';
+        document.body.appendChild(pdfContainer);
+
+        let html = `<h1>Titan Training ${isTestMode ? "Test" : "Worksheet"}</h1>`;
         generatedProblemsData.forEach((problem, index) => {
-            const problemText = `Problem ${index + 1} (${problem.topicName}): ${problem.problemText.replace(/\\\(|\\\)/g, '$')}`;
-            const splitText = doc.splitTextToSize(problemText, 180);
-    
-            if (yPosition + (splitText.length * 10) > 280) {
-                doc.addPage();
-                yPosition = 20;
-            }
-    
-            doc.setFontSize(12);
-            doc.text(splitText, 15, yPosition);
-            yPosition += splitText.length * 7;
-    
-            if (isTestMode || !includeAnswers) {
-                yPosition += 20;
-            }
+            html += `<div class="pdf-problem">
+                        <p><b>Problem ${index + 1} (${problem.topicName}):</b> ${problem.problemText}</p>
+                        ${isTestMode ? '<p>Answer: _______________________</p>' : ''}
+                     </div>`;
         });
-    
+        pdfContainer.innerHTML = html;
+
+        await MathJax.typesetPromise([pdfContainer]);
+
+        const canvas = await html2canvas(pdfContainer, { scale: 2 });
+        const imgData = canvas.toDataURL('image/png');
+        const imgWidth = 210;
+        const pageHeight = 297;
+        const imgHeight = canvas.height * imgWidth / canvas.width;
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        while (heightLeft > 0) {
+            position = heightLeft - imgHeight;
+            doc.addPage();
+            doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+        }
+
         if (includeAnswers && !isTestMode) {
             doc.addPage();
-            doc.setFontSize(22);
-            doc.text("Answer Key", 105, 20, null, null, "center");
-            yPosition = 35;
-    
+            pdfContainer.innerHTML = '';
+            let answerHtml = '<h1>Answer Key</h1>';
             generatedProblemsData.forEach((problem, index) => {
-                const answerText = `Problem ${index + 1}: ${problem.answer.replace(/\\\(|\\\)/g, '$')}`;
-                const splitAnswer = doc.splitTextToSize(answerText, 180);
-    
-                if (yPosition + (splitAnswer.length * 10) > 280) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-    
-                doc.setFontSize(12);
-                doc.text(splitAnswer, 15, yPosition);
-                yPosition += splitAnswer.length * 7 + 5;
+                answerHtml += `<div class="pdf-problem"><p><b>Problem ${index + 1}:</b> ${problem.answer}</p></div>`;
             });
+            pdfContainer.innerHTML = answerHtml;
+            
+            await MathJax.typesetPromise([pdfContainer]);
+
+            const answerCanvas = await html2canvas(pdfContainer, { scale: 2 });
+            const answerImgData = answerCanvas.toDataURL('image/png');
+            const answerImgHeight = answerCanvas.height * imgWidth / answerCanvas.width;
+            let answerHeightLeft = answerImgHeight;
+            let answerPosition = 0;
+
+            doc.addImage(answerImgData, 'PNG', 0, answerPosition, imgWidth, answerImgHeight);
+            answerHeightLeft -= pageHeight;
+
+            while (answerHeightLeft > 0) {
+                answerPosition = answerHeightLeft - answerImgHeight;
+                doc.addPage();
+                doc.addImage(answerImgData, 'PNG', 0, answerPosition, imgWidth, answerImgHeight);
+                answerHeightLeft -= pageHeight;
+            }
         }
-    
+        
+        document.body.removeChild(pdfContainer);
         const fileName = includeAnswers ? "Titan_Training_Worksheet_with_Answers.pdf" : "Titan_Training_Worksheet.pdf";
         doc.save(fileName);
     };
 
-
+    // --- Test Grading ---
     function submitAndGradeTest() {
         let score = 0;
         let resultsHTML = '';
-
         generatedProblemsData.forEach((problemData, index) => {
             const userInput = document.getElementById(`answer-${index}`).value.trim().toLowerCase();
             const correctAnswer = problemData.checkAnswer;
-            let isCorrect = false;
-
-            if (Array.isArray(correctAnswer)) {
-                isCorrect = correctAnswer.map(ans => ans.toLowerCase()).includes(userInput);
-            } else {
-                isCorrect = userInput === String(correctAnswer).toLowerCase();
-            }
-            
+            let isCorrect = Array.isArray(correctAnswer) ?
+                            correctAnswer.map(ans => ans.toLowerCase()).includes(userInput) :
+                            userInput === String(correctAnswer).toLowerCase();
             if (isCorrect) score++;
 
             resultsHTML += `<div class="result-item ${isCorrect ? 'correct' : 'incorrect'}">
@@ -264,27 +245,23 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <p>Correct Answer: ${problemData.answer}</p>
                             </div>`;
         });
-
         const percentage = (score / generatedProblemsData.length) * 100;
         resultsContainer.innerHTML = `<h3>Test Complete! Your score: ${score}/${generatedProblemsData.length} (${percentage.toFixed(1)}%)</h3>` + resultsHTML;
         resultsContainer.style.display = 'block';
         problemsContainer.style.display = 'none';
         submitTestBtn.style.display = 'none';
-
         if (window.MathJax) {
             window.MathJax.typesetPromise([resultsContainer]).catch(console.error);
         }
     }
 
+    // --- General Event Listeners ---
     function addEventListeners() {
         document.querySelectorAll('.solution-toggle').forEach(button => {
             button.addEventListener('click', (event) => {
                 const targetId = event.target.dataset.target;
                 if (targetId) {
-                    const targetElement = document.getElementById(targetId);
-                    if (targetElement) {
-                        targetElement.style.display = targetElement.style.display === 'block' ? 'none' : 'block';
-                    }
+                    document.getElementById(targetId).style.display = document.getElementById(targetId).style.display === 'block' ? 'none' : 'block';
                 }
 
                 if (event.target.classList.contains('graph-toggle')) {
@@ -307,45 +284,34 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- Graph Rendering ---
     function renderGraph(graphId, graphFunctionData, free = false) {
         if (boardInstances[graphId]) {
             JXG.JSXGraph.freeBoard(boardInstances[graphId]);
             delete boardInstances[graphId];
         }
-
         if (free || !graphFunctionData) {
             const graphBox = document.getElementById(graphId);
             if(graphBox) graphBox.innerHTML = '';
             return;
         }
-
         const boardOptions = {
             boundingbox: graphFunctionData.boundingbox || [-10, 10, 10, -10],
             showCopyright: false,
-            showNavigation: true
+            showNavigation: true,
+            axis: !graphFunctionData.diagram
         };
-
-        boardOptions.axis = !graphFunctionData.diagram;
-
         const board = JXG.JSXGraph.initBoard(graphId, boardOptions);
         boardInstances[graphId] = board;
 
         (graphFunctionData.functions || []).forEach(func => {
-            if (func.type === 'expression') {
-                board.create('functiongraph', [func.expression], { strokeColor: 'blue', ...func.options });
-            } else if (func.type === 'point') {
-                board.create('point', [func.x, func.y], { name: func.options.name || '', color: 'red', size: 3, ...func.options });
-            } else if (func.type === 'polygon') {
-                board.create('polygon', func.vertices, { fillColor: 'lightblue', fillOpacity: 0.4, borders: { strokeColor: 'blue' }, ...func.options });
-            } else if (func.type === 'line') {
-                board.create('line', [func.point1, func.point2], { strokeColor: 'black', ...func.options });
-            } else if (func.type === 'ellipse') {
-                board.create('ellipse', [func.center, func.radius], { strokeColor: 'black', ...func.options });
-            } else if (func.type === 'circle') {
-                board.create('circle', [func.center, func.radius], { strokeColor: 'blue', ...func.options });
-            }
+            if (func.type === 'expression') board.create('functiongraph', [func.expression], { strokeColor: 'blue', ...func.options });
+            else if (func.type === 'point') board.create('point', [func.x, func.y], { name: func.options.name || '', color: 'red', size: 3, ...func.options });
+            else if (func.type === 'polygon') board.create('polygon', func.vertices, { fillColor: 'lightblue', fillOpacity: 0.4, borders: { strokeColor: 'blue' }, ...func.options });
+            else if (func.type === 'line') board.create('line', [func.point1, func.point2], { strokeColor: 'black', ...func.options });
+            else if (func.type === 'ellipse') board.create('ellipse', [func.center, func.radius], { strokeColor: 'black', ...func.options });
+            else if (func.type === 'circle') board.create('circle', [func.center, func.radius], { strokeColor: 'blue', ...func.options });
         });
-
         (graphFunctionData.labels || []).forEach(label => {
             board.create('text', [label.x, label.y, label.text], { color: 'black', ...label.options });
         });
